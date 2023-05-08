@@ -1,11 +1,13 @@
 ## Before Starting
 
-This project was created using React and tailwind css
+This project was created using React, tailwindcss and aos.
 Excute the following lines before you proceed to install dependencies
 
 ### `npm install`
 
 ### `npm install -D tailwindcss`
+
+### `npm install aos --save`
 
 ## Available Scripts
 

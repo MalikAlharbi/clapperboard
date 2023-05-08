@@ -1,11 +1,9 @@
 import React from "react";
 
 export default function ShowsCard({ name, img, year }) {
-  if (!name || !img) return null;
-  if (year != null) year = year.split("-")[0];
-
   return (
     <div className="w-72 h-full max-h-100 rounded-lg shadow-lg flex flex-col items-center justify-center relative">
+
       <img
         className="max-h-82 h-full w-82 object-cover rounded-t-lg"
         alt={`${name}`}
@@ -16,7 +14,7 @@ export default function ShowsCard({ name, img, year }) {
       <label className="">
         {year != null ? (
           <p className=" not-italic font-bold text-white">
-            {name} ({year})
+            {name} ({year.split("-")[0]})
           </p>
         ) : (
           <p className=" not-italic font-bold text-white">{name}</p>
