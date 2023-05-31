@@ -1,18 +1,8 @@
 import { useEffect, useState } from "react";
-import fetchSearch from "./ShowsFetch";
+import { fetchSearch } from "./ShowsFetch";
 import ItemList from "./components/ItemList";
-import AOS from 'aos'
-import 'aos/dist/aos.css';
-
-
 
 function Browse() {
-  //Scroll Animation
-  useEffect(() => {
-    AOS.init();
-  }, []);
-
-
   const [searchQuery, setSearchQuery] = useState("");
   const [showsJson, setShowsJson] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -42,12 +32,17 @@ function Browse() {
       />
       <button
         class="bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded"
-        onClick={handleSearch}>
+        onClick={handleSearch}
+      >
         Search
       </button>
       <br />
 
-      <ItemList searched={searched} isLoading={isLoading} showsJson={showsJson} />
+      <ItemList
+        searched={searched}
+        isLoading={isLoading}
+        showsJson={showsJson}
+      />
     </div>
   );
 }
