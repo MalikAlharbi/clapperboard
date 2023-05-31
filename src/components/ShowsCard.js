@@ -1,9 +1,34 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { fetchInfo } from "../ShowsFetch";
+import InfoPopUp from "./InfoPopUp";
+import Loading from "./Loading";
 
-export default function ShowsCard({ name, img, year }) {
+export default function ShowsCard({ showId, name, img, year }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [info, setInfo] = useState(null);
+  const [loading, setIsLoading] = useState(false);
+  const popUpRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (popUpRef.current && !popUpRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+  }, [popUpRef]);
+
+  const handleButtonClick = () => {
+    setIsOpen(true);
+    setIsLoading(true);
+    fetchInfo(showId).then((data) => {
+      setInfo(data);
+      setIsLoading(false);
+    });
+  };
+
   return (
     <div className="w-72 h-full max-h-100 rounded-lg shadow-lg flex flex-col items-center justify-center relative">
-
       <img
         className="max-h-82 h-full w-82 object-cover rounded-t-lg"
         alt={`${name}`}
@@ -27,9 +52,27 @@ export default function ShowsCard({ name, img, year }) {
           Add to My List
         </p>
       </button>
-      <button className="w-9 h-8 border border-black bg-white rounded-full absolute top-0 right-0">
-        <p className="text-xl text-center text-black">i</p>
-      </button>
+
+      <>
+        <button
+          className="w-9 h-8 border border-black bg-white rounded-full absolute top-0 right-0"
+          onClick={handleButtonClick}
+        >
+          <p className="text-xl text-center text-black">i</p>
+        </button>
+        {isOpen && (
+          <InfoPopUp
+            popUpRef={popUpRef}
+            setIsOpen={setIsOpen}
+            info={info}
+            loading={loading}
+            name={name}
+            img={img}
+            year={year}
+          />
+        )}
+      </>
+
       <br />
     </div>
   );

@@ -6,4 +6,10 @@ export const fetchSearch = async (searchQuery) => {
   return data;
 };
 
-export default fetchSearch;
+export const fetchInfo = async (showId) => {
+  const response = await fetch(`https://api.tvmaze.com/shows/${showId}`);
+  const data = await response.json();
+  return data;
+};
+
+export default [fetchSearch, fetchInfo];
