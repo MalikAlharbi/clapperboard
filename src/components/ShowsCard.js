@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { fetchInfo } from "../ShowsFetch";
-import InfoPopUp from "./InfoPopUp";
+import InfoPopup from "./InfoPopUp";
 import Loading from "./Loading";
 
 export default function ShowsCard({ showId, name, img, year }) {
@@ -61,7 +61,7 @@ export default function ShowsCard({ showId, name, img, year }) {
           <p className="text-xl text-center text-black">i</p>
         </button>
         {isOpen && (
-          <InfoPopUp
+          <InfoPopup
             popUpRef={popUpRef}
             setIsOpen={setIsOpen}
             info={info}

@@ -1,7 +1,7 @@
 import React from "react";
 import Loading from "./Loading";
 
-export default function InfoPopUp({
+export default function InfoPopup({
   popUpRef,
   setIsOpen,
   info,
@@ -52,89 +52,86 @@ export default function InfoPopUp({
             ) : (
               <div className="text-white">
                 {/* info fields */}
-                {info && (
-                  <>
-                    {info && (
-                      <>
-                        {info.summary && (
-                          <p>
-                            <span className="text-red-500 font-bold">
-                              Description:
-                            </span>{" "}
-                            <span className="text-white">
-                              {info.summary.replace(/<[^>]*>/g, "")}
-                            </span>
-                          </p>
-                        )}
-                        {info.type && (
-                          <p className="">
-                            <span className="text-red-600">Type:</span>{" "}
-                            <span className="text-blue-500">{info.type}</span>
-                          </p>
-                        )}
-                        {info.runtime && (
-                          <p className="">
-                            <span className="text-red-600">Eposide Time:</span>{" "}
-                            <span className="text-blue-500">
-                              {info.runtime} Minutes
-                            </span>
-                          </p>
-                        )}
-                        {info.language && (
-                          <p>
-                            <span className="text-red-600">Language:</span>{" "}
-                            <span className="text-blue-500">
-                              {info.language}
-                            </span>
-                          </p>
-                        )}
 
-                        {info.network && (
-                          <p>
-                            <span className="text-red-600">Network:</span>{" "}
-                            <span className="text-blue-500">
-                              {info.network.name}
-                            </span>
-                          </p>
-                        )}
-                        {info.genres && info.genres.length > 0 && (
-                          <p>
-                            <span className="text-red-600">Genres:</span>{" "}
-                            <span className="text-blue-500">
-                              {info.genres.join(", ")}
-                            </span>
-                          </p>
-                        )}
-                        {info.rating && info.rating.average && (
-                          <p>
-                            <span className="text-red-600">Rating:</span>{" "}
-                            <span className="text-blue-500">
-                              {info.rating.average}
-                            </span>
-                          </p>
-                        )}
+                <>
+                  {info && (
+                    <>
+                      {info.summary && (
+                        <p>
+                          <span className="text-red-500 font-bold">
+                            Description:
+                          </span>{" "}
+                          <span className="text-white">
+                            {info.summary.replace(/<[^>]*>/g, "")}
+                          </span>
+                        </p>
+                      )}
+                      {info.type && (
+                        <p className="">
+                          <span className="text-red-600">Type:</span>{" "}
+                          <span className="text-blue-500">{info.type}</span>
+                        </p>
+                      )}
+                      {info.runtime && (
+                        <p className="">
+                          <span className="text-red-600">Eposide Time:</span>{" "}
+                          <span className="text-blue-500">
+                            {info.runtime} Minutes
+                          </span>
+                        </p>
+                      )}
+                      {info.language && (
+                        <p>
+                          <span className="text-red-600">Language:</span>{" "}
+                          <span className="text-blue-500">{info.language}</span>
+                        </p>
+                      )}
 
-                        {year && (
-                          <p>
-                            <span className="text-red-600">Premiered:</span>{" "}
-                            <span className="text-blue-500">{year}</span>
-                          </p>
-                        )}
+                      {info.network && (
+                        <p>
+                          <span className="text-red-600">Network:</span>{" "}
+                          <span className="text-blue-500">
+                            {info.network.name}
+                          </span>
+                        </p>
+                      )}
+                      {info.genres && info.genres.length > 0 && (
+                        <p>
+                          <span className="text-red-600">Genres:</span>{" "}
+                          <span className="text-blue-500">
+                            {info.genres.join(", ")}
+                          </span>
+                        </p>
+                      )}
+                      {info.rating && info.rating.average && (
+                        <p>
+                          <span className="text-red-600">Rating:</span>{" "}
+                          <span className="text-blue-500">
+                            {info.rating.average}
+                          </span>
+                        </p>
+                      )}
 
-                        {info.status && (
-                          <p>
-                            <span className="text-red-600">Status:</span>{" "}
-                            <span className="text-blue-500">
-                              {info.ended
-                                ? info.status + " at " + info.ended
-                                : info.status}
-                            </span>
-                          </p>
-                        )}
-                      </>
-                    )}{" "}
-                  </>
-                )}
+                      {year && (
+                        <p>
+                          <span className="text-red-600">Premiered:</span>{" "}
+                          <span className="text-blue-500">{year}</span>
+                        </p>
+                      )}
+
+                      {info.status && (
+                        <p>
+                          <span className="text-red-600">Status:</span>{" "}
+                          <span className="text-blue-500">
+                            {info.ended
+                              ? info.status + " at " + info.ended
+                              : info.status}
+                          </span>
+                        </p>
+                      )}
+                    </>
+                  )}{" "}
+                </>
               </div>
             )}
           </div>
