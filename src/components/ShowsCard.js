@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { fetchInfo } from "../ShowsFetch";
+import AddToMyList from "./AddToMyList";
 import InfoPopup from "./InfoPopUp";
 import Loading from "./Loading";
 
 export default function ShowsCard({ showId, name, img, year }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isPopOpen, setIsPopOpen] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const [info, setInfo] = useState(null);
   const [loading, setIsLoading] = useState(false);
   const popUpRef = useRef(null);
@@ -12,19 +14,23 @@ export default function ShowsCard({ showId, name, img, year }) {
   useEffect(() => {
     function handleClickOutside(event) {
       if (popUpRef.current && !popUpRef.current.contains(event.target)) {
-        setIsOpen(false);
+        setIsPopOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
   }, [popUpRef]);
 
-  const handleButtonClick = () => {
-    setIsOpen(true);
+  const handleInfoButton = () => {
+    setIsPopOpen(true);
     setIsLoading(true);
     fetchInfo(showId).then((data) => {
       setInfo(data);
       setIsLoading(false);
     });
+  };
+
+  const handleAddToMyListButton = () => {
+    setIsAddOpen(true);
   };
 
   return (
@@ -33,6 +39,7 @@ export default function ShowsCard({ showId, name, img, year }) {
         className="max-h-82 h-full w-82 object-cover rounded-t-lg"
         alt={`${name}`}
         src={`${img}`}
+        loading="lazy"
       />
       <br />
 
@@ -47,23 +54,35 @@ export default function ShowsCard({ showId, name, img, year }) {
       </label>
       <br />
 
-      <button className="inline-flex border border-red-600 absoulte  items-center justify-center w-48 h-12 py-2 rounded-md">
+      <button
+        className="inline-flex border border-red-600 absoulte  items-center justify-center w-48 h-12 py-2 rounded-md"
+        onClick={handleAddToMyListButton}
+      >
         <p className="text-xl text-center text-red-600 font-montserrat">
           Add to My List
         </p>
       </button>
 
+      {isAddOpen && (
+        <AddToMyList
+          showId={showId}
+          popUpRef={popUpRef}
+          setIsOpen={setIsAddOpen}
+          name={name}
+        />
+      )}
+
       <>
         <button
           className="w-9 h-8 border border-black bg-white rounded-full absolute top-0 right-0"
-          onClick={handleButtonClick}
+          onClick={handleInfoButton}
         >
           <p className="text-xl text-center text-black">i</p>
         </button>
-        {isOpen && (
+        {isPopOpen && (
           <InfoPopup
             popUpRef={popUpRef}
-            setIsOpen={setIsOpen}
+            setIsOpen={setIsPopOpen}
             info={info}
             loading={loading}
             name={name}
