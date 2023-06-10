@@ -7,10 +7,13 @@ import Loading from "./Loading";
 export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   const [seasons, setSeasons] = useState([]);
   const [episodes, setEpisodes] = useState([]);
+  const [tracker, setTracker] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
   const [clickedSeasons, setClickedSeasons] = useState([]);
+
 
   async function getSeasons() {
     const data = await fetchSeasons(showId);
@@ -21,13 +24,16 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   async function getEpisodes(n) {
     const allEpisodes = await fetchEpoisdes(showId);
     let eps = new Array(n).fill(null).map(() => []);
+    let tracker = new Array(n).fill(null).map(() => []);
     allEpisodes.forEach((episode) => {
       const seasonIndex = episode.season - 1;
       if (seasonIndex >= 0 && seasonIndex < n) {
         eps[seasonIndex].push(episode);
+        tracker[seasonIndex].push(false);
       }
     });
     setEpisodes(eps);
+    setTracker(tracker);
   }
 
   useEffect(() => {
@@ -115,11 +121,10 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
                 {seasons.map((season, index) => (
                   <button
                     key={index}
-                    className={`${
-                      clickedSeasons[index]
-                        ? "bg-red-600 text-white"
-                        : "bg-gray-800 hover:bg-red-600 text-gray-300"
-                    } rounded-full py-2 px-4 font-semibold mr-2 mb-2`}
+                    className={`${clickedSeasons[index]
+                      ? "bg-red-600 text-white"
+                      : "bg-gray-800 hover:bg-red-600 text-gray-300"
+                      } rounded-full py-2 px-4 font-semibold mr-2 mb-2`}
                     onClick={() => handleButton(index)}
                   >
                     Season {season.number}
@@ -131,7 +136,8 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
                   {isClicked && (
                     <EpisodesCard
                       episodes={episodes[currentIndex]}
-                      seasons={data.length}
+                      seasons={seasons.length}
+                      tracker={tracker}
                     />
                   )}
                 </div>

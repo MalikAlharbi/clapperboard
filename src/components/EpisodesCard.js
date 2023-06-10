@@ -1,28 +1,39 @@
 import React, { useEffect, useState } from "react";
 
-export default function EpisodesCard({ episodes, seasons }) {
-  const [savedEpisodes, setSavedEpisodes] = useState([]);
-  const [saveAll, setSaveAll] = useState([{ 0: null }]);
-  useEffect(() => {
-    setSavedEpisodes(new Array(seasons).fill(null).map(() => []));
-  }, []);
+export default function EpisodesCard({ episodes, tracker }) {
+  const [savedEpisodes, setSavedEpisodes] = useState(tracker);
+  const [saveAll, setSaveAll] = useState([]);
+
 
   function handleOneSave(index) {
-    let season = episodes[index].season - 1;
     setSavedEpisodes((prevState) => {
-      const newState = [...prevState];
-      //if it is already clicked, remove it//
-      if (!newState[index])
-        newState[index] = true; // set the clicked episode as saved
-      else newState[index] = false;
+      console.log("prev: ", prevState)
+      const newState = prevState.map((seasonEpisodes, seasonIndex) => {
+        if (seasonIndex === episodes[index].season - 1) {
+          return seasonEpisodes.map((episodeSaved, episodeIndex) => {
 
+            if (episodeIndex === index) {
+              return !episodeSaved; // toggle the saved state of the episode
+            } else {
+              return episodeSaved;
+            }
+          });
+        } else {
+          return seasonEpisodes;
+        }
+      });
       return newState;
     });
   }
 
   useEffect(() => {
     console.log("saved", savedEpisodes);
+    // console.log("saveAll", saveAll);
+
+
   }, [savedEpisodes]);
+
+
 
   return (
     <div
@@ -39,13 +50,19 @@ export default function EpisodesCard({ episodes, seasons }) {
             <div className="bg-gray-800 p-4 flex justify-between">
               <h2 className="text-xl font-semibold text-white">
                 <button className="mr-2" onClick={() => handleOneSave(index)}>
+                  {/* {console.log("inside", savedEpisodes[episode.season - 1][index])} */}
                   <svg height="20" width="20">
                     <circle
                       cx="10"
                       cy="10"
                       r="10"
                       stroke="#020617"
-                      fill={savedEpisodes[index] ? "#4ade80" : "#1f2937"}
+                      fill={
+                        savedEpisodes[episode.season - 1][index]
+                          ? "#4ade80"
+                          : "#1f2937"
+                      }
+
                     />
                   </svg>
                 </button>
