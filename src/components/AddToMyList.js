@@ -13,7 +13,8 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   const [isClicked, setIsClicked] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
   const [clickedSeasons, setClickedSeasons] = useState([]);
-
+  const [totalSavedEpisodes, setTotalSavedEpisodes] = useState(new Array(seasons.length).fill(0));
+  const [clickerReset, setClickerReset] = useState(false);
 
   async function getSeasons() {
     const data = await fetchSeasons(showId);
@@ -49,10 +50,7 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
     getEpisodes(seasons.length);
   }, [seasons]);
 
-  useEffect(() => {
-    console.log("id", showId);
-    console.log("ep:", episodes);
-  }, [episodes]);
+
 
   function handleButton(index) {
     setIsClicked(true);
@@ -78,6 +76,8 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
       return newState;
     });
   }
+
+
 
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 z-50 flex justify-center items-center pl-10 pr-10 mt-9 ">
@@ -119,25 +119,43 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
               <>
                 {/* seasons buttons */}
                 {seasons.map((season, index) => (
-                  <button
-                    key={index}
-                    className={`${clickedSeasons[index]
-                      ? "bg-red-600 text-white"
-                      : "bg-gray-800 hover:bg-red-600 text-gray-300"
-                      } rounded-full py-2 px-4 font-semibold mr-2 mb-2`}
-                    onClick={() => handleButton(index)}
-                  >
-                    Season {season.number}
-                  </button>
+                  <div key={season.id} className="inline-block">
+                    <button
+                      className={`season-button ${clickedSeasons[index]
+                        ? "bg-red-600 text-white"
+                        : totalSavedEpisodes[index] === season.episodeOrder
+                          ? "bg-green-600 text-white"
+                          : "bg-gray-800 hover:bg-red-600 text-gray-300"
+                        } rounded-full py-2 px-4 font-semibold mr-2 mb-2`}
+                      onClick={() => handleButton(index)}
+
+                    >
+                      <span
+                        className={`${totalSavedEpisodes[index] ? "bg-blue-600" : "bg-gray-600 hover:bg-blue-600"} rounded-full w-6 h-6 inline-flex items-center justify-center mr-2`}
+                        onClick={() => {
+                          setClickerReset(!clickerReset)
+                        }}
+                      />
+
+
+
+                      <span>
+                        Season {season.number} ({totalSavedEpisodes[index] || 0}/{season.episodeOrder})
+                      </span>
+                    </button>
+                  </div>
                 ))}
+
 
                 {/* episodes cards */}
                 <div className="col-span-1 mt-9">
                   {isClicked && (
                     <EpisodesCard
                       episodes={episodes[currentIndex]}
-                      seasons={seasons.length}
                       tracker={tracker}
+                      seasonCurrentIndex={currentIndex}
+                      setTotalSavedEpisodes={setTotalSavedEpisodes}
+                      clickerReset={clickerReset}
                     />
                   )}
                 </div>
@@ -148,4 +166,5 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
       </div>
     </div>
   );
+
 }

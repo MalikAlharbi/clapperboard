@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from "react";
 
-export default function EpisodesCard({ episodes, tracker }) {
+export default function EpisodesCard({ episodes, tracker, seasonCurrentIndex, setTotalSavedEpisodes, clickerReset }) {
   const [savedEpisodes, setSavedEpisodes] = useState(tracker);
-  const [saveAll, setSaveAll] = useState([]);
+
+  useEffect(() => {
+    setTotalSavedEpisodes((prevState) => {
+      const newState = [...prevState];
+      newState[seasonCurrentIndex] = savedEpisodes[seasonCurrentIndex].filter(Boolean).length
+      return newState
+    })
+  }, [savedEpisodes])
+
+
+
+  useEffect(() => {
+    handleAllSave();
+  }, [clickerReset]);
 
 
   function handleOneSave(index) {
     setSavedEpisodes((prevState) => {
-      console.log("prev: ", prevState)
       const newState = prevState.map((seasonEpisodes, seasonIndex) => {
         if (seasonIndex === episodes[index].season - 1) {
           return seasonEpisodes.map((episodeSaved, episodeIndex) => {
@@ -26,14 +38,28 @@ export default function EpisodesCard({ episodes, tracker }) {
     });
   }
 
+  function handleAllSave() {
+    setSavedEpisodes((prevState) => {
+      const newState = prevState.map((currentSavedEpisodes, seasonIndex) => {
+        if (seasonIndex === seasonCurrentIndex) {
+          if (currentSavedEpisodes.every(element => element === false))
+            return currentSavedEpisodes = currentSavedEpisodes.map(() => true);
+          else
+            return currentSavedEpisodes = currentSavedEpisodes.map(() => false);
+        }
+        else
+          return currentSavedEpisodes
+      })
+      return newState;
+    })
+  }
+
+
   useEffect(() => {
     console.log("saved", savedEpisodes);
-    // console.log("saveAll", saveAll);
 
 
   }, [savedEpisodes]);
-
-
 
   return (
     <div
@@ -44,28 +70,18 @@ export default function EpisodesCard({ episodes, tracker }) {
         position: "relative",
       }}
     >
+
       {episodes?.map((episode, index) => (
         <div key={episode.id} className="mb-4">
           <div className="bg-gray-900 rounded-lg shadow-md overflow-hidden">
             <div className="bg-gray-800 p-4 flex justify-between">
               <h2 className="text-xl font-semibold text-white">
-                <button className="mr-2" onClick={() => handleOneSave(index)}>
-                  {/* {console.log("inside", savedEpisodes[episode.season - 1][index])} */}
-                  <svg height="20" width="20">
-                    <circle
-                      cx="10"
-                      cy="10"
-                      r="10"
-                      stroke="#020617"
-                      fill={
-                        savedEpisodes[episode.season - 1][index]
-                          ? "#4ade80"
-                          : "#1f2937"
-                      }
+                {/* circle for episodes */}
+                <button
+                  className={`${savedEpisodes[episode.season - 1][index] ? "bg-green-500" : "bg-gray-600 hover:bg-red-600"} rounded-full w-5 h-5 mr-2 mb-2`}
+                  onClick={() => handleOneSave(index)} />
 
-                    />
-                  </svg>
-                </button>
+                {/* episodes details */}
                 ({episode.number}) {episode.name} |{" "}
                 <span className="text-red-500">{episode.runtime} </span> minutes
               </h2>
@@ -90,7 +106,9 @@ export default function EpisodesCard({ episodes, tracker }) {
             </div>
           </div>
         </div>
+
       ))}
+
     </div>
   );
 }
