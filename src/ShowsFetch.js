@@ -12,4 +12,20 @@ export const fetchInfo = async (showId) => {
   return data;
 };
 
-export default [fetchSearch, fetchInfo];
+export const fetchSeasons = async (showId) => {
+  const response = await fetch(
+    `https://api.tvmaze.com/shows/${showId}/seasons`
+  );
+  const data = await response.json();
+  return data;
+};
+
+export const fetchEpoisdes = async (showId) => {
+  const response = await fetch(
+    `https://api.tvmaze.com/shows/${showId}/episodes`
+  );
+  const data = await response.json();
+  return data;
+};
+
+export default [fetchSearch, fetchInfo, fetchSeasons, fetchEpoisdes];
