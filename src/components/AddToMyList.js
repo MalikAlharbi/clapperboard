@@ -8,12 +8,11 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   const [seasons, setSeasons] = useState([]);
   const [episodes, setEpisodes] = useState([]);
   const [tracker, setTracker] = useState([]);
-
+  const [clickedSeasons, setClickedSeasons] = useState([]);
+  const [totalSavedEpisodes, setTotalSavedEpisodes] = useState(new Array(seasons.length).fill(0));
   const [loading, setLoading] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
-  const [clickedSeasons, setClickedSeasons] = useState([]);
-  const [totalSavedEpisodes, setTotalSavedEpisodes] = useState(new Array(seasons.length).fill(0));
   const [clickerReset, setClickerReset] = useState(false);
 
   async function getSeasons() {
@@ -80,17 +79,17 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
 
 
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 z-50 flex justify-center items-center pl-10 pr-10 mt-9 ">
+    <div className="fixed top-0 left-0 right-0 bottom-0 z-50  justify-center items-center pl-10 pr-10 max-h-2xl h-screen grid place-items-center">
       <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-900 opacity-50"></div>
 
       <div
-        className="bg-gray-700 rounded-lg z-10 max-w-4xl right-0 flex relative"
+        className="bg-gray-700 rounded-lg z-10  max-w-4xl  right-0 flex relative"
         ref={popUpRef}
       >
-        <div className="absolute top-0 right-0">
+        <div className="absolute top-0 right-0 ">
           {/* close window */}
           <button
-            className="w-6 h-6 text-white hover:text-red-400 focus:outline-none mt-2 mr-5"
+            className="w-6 h-6 text-white hover:text-red-400 focus:outline-none "
             onClick={() => setIsOpen(false)}
           >
             <svg viewBox="0 0 20 20" fill="currentColor">
@@ -103,16 +102,16 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
           </button>
         </div>
 
-        <div className="px-6 py-4 flex flex-col w-full">
-          <div className="flex items-center mb-4 ">
-            <h2 className="text-white text-lg font-bold">
-              Tell us where you stopped
+        <div className="px-6 py-4 flex flex-col ">
+          <div className=" relative items-center mb-4  top-0 ">
+            <h2 className="text-white text-xl font-bold">
+              Tell us where you <span className="text-red-500">stopped</span>
             </h2>
           </div>
 
           <hr className="border-gray-600 mb-4" />
 
-          <div className="text-white flex-1">
+          <div className="text-white">
             {loading ? (
               <Loading />
             ) : (
@@ -139,7 +138,7 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
 
 
 
-                      <span>
+                      <span className=" text-lg">
                         Season {season.number} ({totalSavedEpisodes[index] || 0}/{season.episodeOrder})
                       </span>
                     </button>

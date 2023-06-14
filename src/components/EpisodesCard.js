@@ -6,10 +6,11 @@ export default function EpisodesCard({ episodes, tracker, seasonCurrentIndex, se
   useEffect(() => {
     setTotalSavedEpisodes((prevState) => {
       const newState = [...prevState];
-      newState[seasonCurrentIndex] = savedEpisodes[seasonCurrentIndex].filter(Boolean).length
+      newState[seasonCurrentIndex] = savedEpisodes[seasonCurrentIndex]?.filter(Boolean).length
       return newState
     })
   }, [savedEpisodes])
+
 
 
 
@@ -42,7 +43,7 @@ export default function EpisodesCard({ episodes, tracker, seasonCurrentIndex, se
     setSavedEpisodes((prevState) => {
       const newState = prevState.map((currentSavedEpisodes, seasonIndex) => {
         if (seasonIndex === seasonCurrentIndex) {
-          if (currentSavedEpisodes.every(element => element === false))
+          if (currentSavedEpisodes.some(element => element === false))
             return currentSavedEpisodes = currentSavedEpisodes.map(() => true);
           else
             return currentSavedEpisodes = currentSavedEpisodes.map(() => false);
@@ -55,11 +56,6 @@ export default function EpisodesCard({ episodes, tracker, seasonCurrentIndex, se
   }
 
 
-  useEffect(() => {
-    console.log("saved", savedEpisodes);
-
-
-  }, [savedEpisodes]);
 
   return (
     <div
@@ -75,6 +71,7 @@ export default function EpisodesCard({ episodes, tracker, seasonCurrentIndex, se
         <div key={episode.id} className="mb-4">
           <div className="bg-gray-900 rounded-lg shadow-md overflow-hidden">
             <div className="bg-gray-800 p-4 flex justify-between">
+
               <h2 className="text-xl font-semibold text-white">
                 {/* circle for episodes */}
                 <button
@@ -86,25 +83,26 @@ export default function EpisodesCard({ episodes, tracker, seasonCurrentIndex, se
                 <span className="text-red-500">{episode.runtime} </span> minutes
               </h2>
 
-              {episode.image?.medium && (
-                <img
-                  className="rounded w-60 h-25"
-                  src={episode.image?.medium}
-                  alt=""
-                  loading="lazy"
-                />
-              )}
+
             </div>
             <div className="p-4">
               <p className=" text-lg font-semibold text-gray-500 mb-2">
                 {episode.airdate}
               </p>
-
+              {episode.image?.medium && (
+                <img
+                  className="rounded float-left md:float-right p-1"
+                  src={episode.image?.medium}
+                  alt=""
+                  loading="lazy"
+                />
+              )}
               <span className="text-lg text-white leading-7">
                 {episode.summary?.replace(/<[^>]*>/g, "")}
               </span>
             </div>
           </div>
+
         </div>
 
       ))}

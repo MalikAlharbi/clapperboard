@@ -9,16 +9,28 @@ export default function ShowsCard({ showId, name, img, year }) {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [info, setInfo] = useState(null);
   const [loading, setIsLoading] = useState(false);
-  const popUpRef = useRef(null);
+  const infoPopUpRef = useRef(null);
+  const addToListPopUpRef = useRef(null);
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (popUpRef.current && !popUpRef.current.contains(event.target)) {
+      if (
+        infoPopUpRef.current &&
+        !infoPopUpRef.current.contains(event.target)
+      ) {
         setIsPopOpen(false);
+      }
+      if (
+        addToListPopUpRef.current &&
+        !addToListPopUpRef.current.contains(event.target)
+      ) {
+        setIsAddOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
-  }, [popUpRef]);
+
+
+  }, [infoPopUpRef, addToListPopUpRef]);
 
   const handleInfoButton = () => {
     setIsPopOpen(true);
@@ -27,10 +39,6 @@ export default function ShowsCard({ showId, name, img, year }) {
       setInfo(data);
       setIsLoading(false);
     });
-  };
-
-  const handleAddToMyListButton = () => {
-    setIsAddOpen(true);
   };
 
   return (
@@ -56,7 +64,7 @@ export default function ShowsCard({ showId, name, img, year }) {
 
       <button
         className="inline-flex border border-red-600 absoulte  items-center justify-center w-48 h-12 py-2 rounded-md"
-        onClick={handleAddToMyListButton}
+        onClick={() => setIsAddOpen(true)}
       >
         <p className="text-xl text-center text-red-600 font-montserrat">
           Add to My List
@@ -66,7 +74,7 @@ export default function ShowsCard({ showId, name, img, year }) {
       {isAddOpen && (
         <AddToMyList
           showId={showId}
-          popUpRef={popUpRef}
+          popUpRef={addToListPopUpRef}
           setIsOpen={setIsAddOpen}
           name={name}
         />
@@ -81,7 +89,7 @@ export default function ShowsCard({ showId, name, img, year }) {
         </button>
         {isPopOpen && (
           <InfoPopup
-            popUpRef={popUpRef}
+            popUpRef={infoPopUpRef}
             setIsOpen={setIsPopOpen}
             info={info}
             loading={loading}
