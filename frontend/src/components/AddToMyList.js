@@ -13,7 +13,7 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   const [loading, setLoading] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
-  const [clickerReset, setClickerReset] = useState(false);
+  const [clickerReset, setClickerReset] = useState(null);
 
   async function getSeasons() {
     const data = await fetchSeasons(showId);

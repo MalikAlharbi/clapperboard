@@ -15,7 +15,8 @@ export default function EpisodesCard({ episodes, tracker, seasonCurrentIndex, se
 
 
   useEffect(() => {
-    handleAllSave();
+    if (clickerReset)
+      handleAllSave();
   }, [clickerReset]);
 
 
