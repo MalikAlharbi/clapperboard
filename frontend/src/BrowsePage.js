@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { fetchSearch } from "./ShowsFetch";
-import ItemList from "./components/ItemList";
+import React, { useState } from 'react';
+import { fetchSearch } from './ShowsFetch';
+import ItemList from './components/ItemList';
 
-function Browse() {
-  const [searchQuery, setSearchQuery] = useState("");
+export default function BrowsePage() {
+  const [searchQuery, setSearchQuery] = useState('');
   const [showsJson, setShowsJson] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -24,7 +24,7 @@ function Browse() {
         placeholder="Search for Tv Shows..."
         onChange={(event) => setSearchQuery(event.target.value)}
         onKeyDown={(event) => {
-          if (event.key === "Enter") {
+          if (event.key === 'Enter') {
             handleSearch();
           }
         }}
@@ -38,13 +38,7 @@ function Browse() {
       </button>
       <br />
 
-      <ItemList
-        searched={searched}
-        isLoading={isLoading}
-        showsJson={showsJson}
-      />
+      <ItemList searched={searched} isLoading={isLoading} showsJson={showsJson} />
     </div>
   );
 }
-
-export default Browse;
