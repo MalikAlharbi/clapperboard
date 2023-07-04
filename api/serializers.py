@@ -5,10 +5,10 @@ from .models import UserShow
 class UserShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserShow
-        fields = ('id', 'user', 'show', 'watched_episodes')
+        fields = ('id', 'user', 'show', 'season', 'watched_episodes')
 
 
 class UserShowUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserShow
-        fields = ('user', 'show', 'watched_episodes')
+        fields = ('user', 'show', 'season', 'watched_episodes')

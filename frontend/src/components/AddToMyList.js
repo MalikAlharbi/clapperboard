@@ -1,6 +1,7 @@
 import { data } from "autoprefixer";
 import React, { useEffect, useRef, useState } from "react";
 import { fetchSeasons, fetchEpoisdes } from "../ShowsFetch";
+import { getSavedEpisodes } from "../ApiRequest";
 import EpisodesCard from "./EpisodesCard";
 import Loading from "./Loading";
 
@@ -9,7 +10,9 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   const [episodes, setEpisodes] = useState([]);
   const [tracker, setTracker] = useState([]);
   const [clickedSeasons, setClickedSeasons] = useState([]);
-  const [totalSavedEpisodes, setTotalSavedEpisodes] = useState(new Array(seasons.length).fill(0));
+  const [totalSavedEpisodes, setTotalSavedEpisodes] = useState(
+    new Array(seasons.length).fill(0)
+  );
   const [loading, setLoading] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
@@ -21,26 +24,42 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
     setClickedSeasons(new Array(data.length).fill(false)); // initialize clickedSeasons array with false values
   }
 
-  async function getEpisodes(n) {
+  async function getEpisodes(numOfSeasons) {
     const allEpisodes = await fetchEpoisdes(showId);
-    let eps = new Array(n).fill(null).map(() => []);
-    let tracker = new Array(n).fill(null).map(() => []);
+    let dbEpisodes = await getSavedEpisodes(1, showId);
+    let eps = new Array(numOfSeasons).fill(null).map(() => []);
+    let tracker = new Array(numOfSeasons).fill(null).map(() => []);
+    let totalSaved = new Array(numOfSeasons).fill(null).map(() => null);
     allEpisodes.forEach((episode) => {
       const seasonIndex = episode.season - 1;
-      if (seasonIndex >= 0 && seasonIndex < n) {
+      if (seasonIndex >= 0 && seasonIndex < numOfSeasons) {
         eps[seasonIndex].push(episode);
         tracker[seasonIndex].push(false);
       }
     });
+    dbEpisodes.forEach((watched_episodes) => {
+      const seasonIndex = watched_episodes.season - 1;
+      const str = watched_episodes.watched_episodes;
+      const arr = str.split(",").map((str) => str === "true");
+      console.log("arr", str);
+      if (seasonIndex >= 0 && seasonIndex < numOfSeasons) {
+        tracker[seasonIndex] = arr;
+        totalSaved[seasonIndex] = arr.filter(Boolean).length;
+      }
+    });
+    console.log("db", dbEpisodes);
+    console.log("tr", tracker);
     setEpisodes(eps);
     setTracker(tracker);
+    setTotalSavedEpisodes(totalSaved);
+    console.log("total", totalSaved);
+    setLoading(false);
   }
 
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
       await getSeasons();
-      setLoading(false);
     }
     fetchData();
   }, []);
@@ -48,8 +67,6 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   useEffect(() => {
     getEpisodes(seasons.length);
   }, [seasons]);
-
-
 
   function handleButton(index) {
     setIsClicked(true);
@@ -75,8 +92,6 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
       return newState;
     });
   }
-
-
 
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 z-50  justify-center items-center pl-10 pr-10 max-h-2xl h-screen grid place-items-center">
@@ -120,36 +135,39 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
                 {seasons.map((season, index) => (
                   <div key={season.id} className="inline-block">
                     <button
-                      className={`season-button ${clickedSeasons[index]
-                        ? "bg-red-600 text-white"
-                        : totalSavedEpisodes[index] === season.episodeOrder
+                      className={`season-button ${
+                        clickedSeasons[index]
+                          ? "bg-red-600 text-white"
+                          : totalSavedEpisodes[index] === season.episodeOrder
                           ? "bg-green-600 text-white"
                           : "bg-gray-800 hover:bg-red-600 text-gray-300"
-                        } rounded-full py-2 px-4 font-semibold mr-2 mb-2`}
+                      } rounded-full py-2 px-4 font-semibold mr-2 mb-2`}
                       onClick={() => handleButton(index)}
-
                     >
                       <span
-                        className={`${totalSavedEpisodes[index] ? "bg-blue-600" : "bg-gray-600 hover:bg-blue-600"} rounded-full w-6 h-6 inline-flex items-center justify-center mr-2`}
+                        className={`${
+                          totalSavedEpisodes[index]
+                            ? "bg-blue-600"
+                            : "bg-gray-600 hover:bg-blue-600"
+                        } rounded-full w-6 h-6 inline-flex items-center justify-center mr-2`}
                         onClick={() => {
-                          setClickerReset(!clickerReset)
+                          setClickerReset(!clickerReset);
                         }}
                       />
 
-
-
                       <span className=" text-lg">
-                        Season {season.number} ({totalSavedEpisodes[index] || 0}/{season.episodeOrder})
+                        Season {season.number} ({totalSavedEpisodes[index] || 0}
+                        /{season.episodeOrder})
                       </span>
                     </button>
                   </div>
                 ))}
 
-
                 {/* episodes cards */}
                 <div className="col-span-1 mt-9">
                   {isClicked && (
                     <EpisodesCard
+                      showId={showId}
                       episodes={episodes[currentIndex]}
                       tracker={tracker}
                       seasonCurrentIndex={currentIndex}
@@ -165,5 +183,4 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
       </div>
     </div>
   );
-
 }
