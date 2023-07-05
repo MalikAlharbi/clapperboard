@@ -41,18 +41,14 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
       const seasonIndex = watched_episodes.season - 1;
       const str = watched_episodes.watched_episodes;
       const arr = str.split(",").map((str) => str === "true");
-      console.log("arr", str);
       if (seasonIndex >= 0 && seasonIndex < numOfSeasons) {
         tracker[seasonIndex] = arr;
         totalSaved[seasonIndex] = arr.filter(Boolean).length;
       }
     });
-    console.log("db", dbEpisodes);
-    console.log("tr", tracker);
     setEpisodes(eps);
     setTracker(tracker);
     setTotalSavedEpisodes(totalSaved);
-    console.log("total", totalSaved);
     setLoading(false);
   }
 
@@ -94,7 +90,7 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   }
 
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 z-50  justify-center items-center pl-10 pr-10 max-h-2xl h-screen grid place-items-center">
+    <div className="fixed top-0 left-0 right-0 bottom-0 z-50  justify-center items-center pl-10 pr-10 max-h-2xl h-screen w-screen grid place-items-center overflow-y-scroll">
       <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-900 opacity-50"></div>
 
       <div
@@ -126,59 +122,61 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
 
           <hr className="border-gray-600 mb-4" />
 
-          <div className="text-white">
-            {loading ? (
-              <Loading />
-            ) : (
-              <>
-                {/* seasons buttons */}
-                {seasons.map((season, index) => (
-                  <div key={season.id} className="inline-block">
-                    <button
-                      className={`season-button ${
-                        clickedSeasons[index]
+
+          {loading ? (
+            <Loading />
+          ) : (
+            <>
+              {/* seasons buttons */}
+              <div className="relative flex items-center">
+                <div className="w-full h-full max-w-2xl overflow-x-auto whitespace-nowrap scroll-smooth">
+                  {seasons.map((season, index) => (
+                    <div key={season.id} className="inline-block">
+                      <button
+                        className={`${clickedSeasons[index]
                           ? "bg-red-600 text-white"
                           : totalSavedEpisodes[index] === season.episodeOrder
-                          ? "bg-green-600 text-white"
-                          : "bg-gray-800 hover:bg-red-600 text-gray-300"
-                      } rounded-full py-2 px-4 font-semibold mr-2 mb-2`}
-                      onClick={() => handleButton(index)}
-                    >
-                      <span
-                        className={`${
-                          totalSavedEpisodes[index]
+                            ? "bg-green-600 text-white"
+                            : "bg-gray-800 hover:bg-red-600 text-gray-300"
+                          } rounded-full py-2 px-4 font-semibold mr-2 mb-2`}
+                        onClick={() => handleButton(index)}
+                      >
+                        <span
+                          className={`${totalSavedEpisodes[index]
                             ? "bg-blue-600"
                             : "bg-gray-600 hover:bg-blue-600"
-                        } rounded-full w-6 h-6 inline-flex items-center justify-center mr-2`}
-                        onClick={() => {
-                          setClickerReset(!clickerReset);
-                        }}
-                      />
-
-                      <span className=" text-lg">
-                        Season {season.number} ({totalSavedEpisodes[index] || 0}
-                        /{season.episodeOrder})
-                      </span>
-                    </button>
-                  </div>
-                ))}
-
-                {/* episodes cards */}
-                <div className="col-span-1 mt-9">
-                  {isClicked && (
-                    <EpisodesCard
-                      showId={showId}
-                      episodes={episodes[currentIndex]}
-                      tracker={tracker}
-                      seasonCurrentIndex={currentIndex}
-                      setTotalSavedEpisodes={setTotalSavedEpisodes}
-                      clickerReset={clickerReset}
-                    />
-                  )}
+                            } rounded-full w-6 h-6 inline-flex items-center justify-center mr-2`}
+                          onClick={() => {
+                            setClickerReset(!clickerReset);
+                          }}
+                        />
+                        <span className=" text-lg">
+                          Season {season.number} ({totalSavedEpisodes[index] || 0}
+                          /{season.episodeOrder})
+                        </span>
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              </>
-            )}
-          </div>
+              </div>
+
+
+              {/* episodes cards */}
+              <div className="col-span-1 mt-9 max-w-2xl">
+                {isClicked && (
+                  <EpisodesCard
+                    showId={showId}
+                    episodes={episodes[currentIndex]}
+                    tracker={tracker}
+                    seasonCurrentIndex={currentIndex}
+                    setTotalSavedEpisodes={setTotalSavedEpisodes}
+                    clickerReset={clickerReset}
+                  />
+                )}
+              </div>
+            </>
+          )}
+
         </div>
       </div>
     </div>
