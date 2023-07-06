@@ -6,6 +6,7 @@ export const fetchSearch = async (searchQuery) => {
   return data;
 };
 
+
 export const fetchInfo = async (showId) => {
   const response = await fetch(`https://api.tvmaze.com/shows/${showId}`);
   const data = await response.json();
@@ -17,7 +18,8 @@ export const fetchSeasons = async (showId) => {
     `https://api.tvmaze.com/shows/${showId}/seasons`
   );
   const data = await response.json();
-  return data;
+  const filteredData = data.filter(season => season.premiereDate !== null);
+  return filteredData;
 };
 
 export const fetchEpoisdes = async (showId) => {
