@@ -8,7 +8,13 @@ class UserShowSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'show', 'season', 'watched_episodes')
 
 
+class UserShowsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserShow
+        fields = ('id', 'show')
+
+
 class UserShowUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserShow
-        fields = ('user', 'show', 'season', 'watched_episodes')
+        fields = ('show', 'season', 'watched_episodes')

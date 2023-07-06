@@ -1,4 +1,3 @@
-import { data } from "autoprefixer";
 import React, { useEffect, useRef, useState } from "react";
 import { fetchSeasons, fetchEpoisdes } from "../ShowsFetch";
 import { getSavedEpisodes } from "../ApiRequest";
@@ -26,7 +25,7 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
 
   async function getEpisodes(numOfSeasons) {
     const allEpisodes = await fetchEpoisdes(showId);
-    let dbEpisodes = await getSavedEpisodes(1, showId);
+    let dbEpisodes = await getSavedEpisodes(showId);
     let eps = new Array(numOfSeasons).fill(null).map(() => []);
     let tracker = new Array(numOfSeasons).fill(null).map(() => []);
     let totalSaved = new Array(numOfSeasons).fill(null).map(() => null);

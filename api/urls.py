@@ -1,8 +1,9 @@
 from django.urls import include, path
-from .views import UserShowView, UserShowUpdate, UserWathcedEpisodes
+from .views import AllUsers, UserShowUpdate, UserShows, UserEpisodes
 
 urlpatterns = [
-    path('usershows', UserShowView.as_view()),
-    path('user-watched-episodes/', UserWathcedEpisodes.as_view()),
+    path('allusers', AllUsers.as_view()),
+    path('user-shows/', UserShows.as_view()),
+    path('user-episodes/', UserEpisodes.as_view()),
     path('saveshow', UserShowUpdate.as_view()),
 ]

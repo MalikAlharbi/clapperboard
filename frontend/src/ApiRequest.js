@@ -13,10 +13,27 @@ function getCookie(name) {
   return cookieValue;
 }
 
-export const getSavedEpisodes = async (user_id, show_id) => {
+export const getUserShows = async () => {
   const csrftoken = getCookie("csrftoken");
   const response = await fetch(
-    `/api/user-watched-episodes/?user=${user_id}&show=${show_id}`,
+    `/api/user-shows/`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
+    }
+  );
+  const data = await response.json();
+  return data;
+};
+
+
+export const getSavedEpisodes = async (show_id) => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(
+    `/api/user-episodes/?show=${show_id}`,
     {
       method: "GET",
       headers: {
@@ -42,7 +59,6 @@ export const postSavedEpisodes = async (
       "X-CSRFToken": csrftoken,
     },
     body: JSON.stringify({
-      user: 1,
       show: showId,
       season: seasonCurrentIndex + 1,
       watched_episodes: savedEpisodes.toString(),
@@ -52,4 +68,4 @@ export const postSavedEpisodes = async (
     .then((data) => console.log(data));
 };
 
-export default [getSavedEpisodes, postSavedEpisodes];
+export default [getUserShows, getSavedEpisodes, postSavedEpisodes];
