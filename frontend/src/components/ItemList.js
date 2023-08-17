@@ -2,9 +2,8 @@ import React from "react";
 import Loading from "./Loading";
 import ShowsCard from "./ShowsCard";
 
-export default function ItemList({ searched, isLoading, showsJson }) {
+export default function ItemList({ searched, isLoading, showsJson, isLoggedIn }) {
   let filteredShows = [];
-
   if (searched) {
     filteredShows = showsJson.filter(
       (show) => show?.show?.name && show?.show?.image?.original
@@ -25,6 +24,7 @@ export default function ItemList({ searched, isLoading, showsJson }) {
                 name={show["show"]["name"]}
                 img={show["show"]["image"]["original"]}
                 year={show["show"]["premiered"]}
+                isLoggedIn={isLoggedIn}
               />
             ))}
           </div>
@@ -38,6 +38,7 @@ export default function ItemList({ searched, isLoading, showsJson }) {
               name={show["name"]}
               img={show["image"]["original"]}
               year={show["premiered"]}
+              isLoggedIn={isLoggedIn}
             />
           ))}
         </div>
