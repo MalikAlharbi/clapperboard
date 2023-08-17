@@ -1,29 +1,62 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import ItemList from './components/ItemList';
+import Sidebar from './components/Sidebar';
 import { fetchInfo } from "./ShowsFetch";
-import { getUserShows } from "./ApiRequest"
+import { is_authenticated, getUserShows } from "./ApiRequest"
+import Auth from "./components/Auth";
+import { AuthContext } from "./App";
 
 export default function UserShowsPage() {
 
     const [showsJson, setShowsJson] = useState([]);
+    const [noShows, setNoShows] = useState(false);
+    const { isLoggedIn } = useContext(AuthContext);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        async function getShows() {
-            let dbShows = await getUserShows();
-            let shows = await Promise.all(dbShows.map((show) => {
-                return fetchInfo(show.show);
-            }));
+
+    async function getShows() {
+        let dbShows = await getUserShows();
+        let shows = await Promise.all(dbShows.map((show) => {
+            return fetchInfo(show.show);
+        }));
+        if (shows.length == 0)
+            setNoShows(true);
+        else
             setShowsJson(shows);
-            setIsLoading(false);
-        }
-        getShows();
-    }, []);
+
+    }
+
+    async function fetchData() {
+        if (isLoggedIn)
+            await getShows();
+    }
+    useEffect(() => {
+        fetchData();
+        setIsLoading(false);
+    }, [isLoggedIn]);
+
 
 
     return (
-        <div>
-            <ItemList isLoading={isLoading} showsJson={showsJson} />
+        <div className='flex flex-col h-screen'>
+
+            <Sidebar isLoggedIn={isLoggedIn} />
+            {!isLoading && (
+                <>
+                    {/* handle if logged in logic */}
+                    {!isLoggedIn ?
+                        <Auth />
+                        : (
+
+                            <div className=' mx-auto mt-6'>
+                                {noShows ? <p className='text-red-600 font-bold text-4xl'>Add your shows!</p> : (
+                                    <ItemList isLoading={isLoading} showsJson={showsJson} isLoggedIn={isLoggedIn} />
+                                )}
+                            </div>
+                        )
+                    }
+                </>
+            )}
         </div>
-    )
+    );
 }
