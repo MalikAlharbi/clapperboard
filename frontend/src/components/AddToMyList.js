@@ -12,30 +12,59 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   const [totalSavedEpisodes, setTotalSavedEpisodes] = useState(
     new Array(seasons.length).fill(0)
   );
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [isClicked, setIsClicked] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
-  const [clickerReset, setClickerReset] = useState(null);
+  const [clickerReset, setClickerReset] = useState(false);
 
   async function getSeasons() {
     const data = await fetchSeasons(showId);
+
+
     setSeasons(data);
     setClickedSeasons(new Array(data.length).fill(false)); // initialize clickedSeasons array with false values
+
   }
 
-  async function getEpisodes(numOfSeasons) {
+  async function getEpisodes(seasons) {
+    let flag = false;
+    if (seasons[0]?.number != 1)
+      flag = true;
+
+
+    let numOfSeasons = seasons.length;
     const allEpisodes = await fetchEpoisdes(showId);
     let dbEpisodes = await getSavedEpisodes(showId);
     let eps = new Array(numOfSeasons).fill(null).map(() => []);
     let tracker = new Array(numOfSeasons).fill(null).map(() => []);
     let totalSaved = new Array(numOfSeasons).fill(null).map(() => null);
-    allEpisodes.forEach((episode) => {
-      const seasonIndex = episode.season - 1;
-      if (seasonIndex >= 0 && seasonIndex < numOfSeasons) {
-        eps[seasonIndex].push(episode);
-        tracker[seasonIndex].push(false);
-      }
-    });
+
+
+
+    if (flag) {
+      allEpisodes.forEach((episode) => {
+        const seasonIndex = seasons.findIndex(function (item) {
+          return Object.values(item).includes(episode.season);
+        });
+        if (seasonIndex >= 0 && seasonIndex < numOfSeasons) {
+          eps[seasonIndex].push(episode);
+          tracker[seasonIndex].push(false);
+        }
+      });
+    }
+    else {
+
+
+      allEpisodes.forEach((episode) => {
+        const seasonIndex = episode.season - 1;
+
+        if (seasonIndex >= 0 && seasonIndex < numOfSeasons) {
+          eps[seasonIndex].push(episode);
+          tracker[seasonIndex].push(false);
+        }
+      });
+    }
+
     dbEpisodes.forEach((watched_episodes) => {
       const seasonIndex = watched_episodes.season - 1;
       const str = watched_episodes.watched_episodes;
@@ -46,6 +75,7 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
       }
     });
     setEpisodes(eps);
+
     setTracker(tracker);
     setTotalSavedEpisodes(totalSaved);
     setLoading(false);
@@ -60,7 +90,8 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   }, []);
 
   useEffect(() => {
-    getEpisodes(seasons.length);
+    if (seasons != null)
+      getEpisodes(seasons);
   }, [seasons]);
 
   function handleButton(index) {
@@ -170,6 +201,7 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
                     seasonCurrentIndex={currentIndex}
                     setTotalSavedEpisodes={setTotalSavedEpisodes}
                     clickerReset={clickerReset}
+                    seasons={seasons}
                   />
                 )}
               </div>
