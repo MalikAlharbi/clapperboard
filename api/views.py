@@ -1,4 +1,7 @@
-from itertools import groupby
+import json
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.http import JsonResponse
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -78,3 +81,62 @@ class UserShowUpdate(APIView):
                 return Response(UserShowSerializer(newData).data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+def signIn(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        username = data["username"]
+        password = data["password"]
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'success': True})
+
+        return JsonResponse({'success': False})
+
+
+def signUp(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        username = data["username"]
+        password = data["password"]
+        email = data["email"]
+        invalid_username = User.objects.filter(username=username).exists()
+        invalid_email = User.objects.filter(email=email).exists()
+
+        if not (username and password and email):
+            return JsonResponse({'success': False, 'error': 'Missing parameters'})
+
+        if (invalid_username and invalid_email):
+            return JsonResponse({"success": False, 'error': 'Username and email already exists'})
+
+        if invalid_username:
+            return JsonResponse({"success": False, 'error': 'Username already exists'})
+
+        if invalid_email:
+            return JsonResponse({"success": False, 'error': 'Email already exists'})
+
+        user = User.objects.create_user(
+            username=username, email=email, password=password)
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'success': True})
+
+        return JsonResponse({'success': False})
+
+
+def is_authenticated(request):
+    if (request.user.is_authenticated):
+        return JsonResponse({"success": True})
+
+    return JsonResponse({"success": False})
+
+
+def signOut(request):
+    permission_classes = [IsAuthenticated]
+    if (request.user.is_authenticated):
+        logout(request)
+        return JsonResponse({"success": True})
+
+    return JsonResponse({"success": False, "error": "error occured"})
