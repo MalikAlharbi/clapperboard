@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from rest_framework import generics, status
@@ -82,7 +83,7 @@ class UserShowUpdate(APIView):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
+@ensure_csrf_cookie
 def signIn(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -95,7 +96,7 @@ def signIn(request):
 
         return JsonResponse({'success': False})
 
-
+@ensure_csrf_cookie
 def signUp(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -125,14 +126,14 @@ def signUp(request):
 
         return JsonResponse({'success': False})
 
-
+@ensure_csrf_cookie
 def is_authenticated(request):
     if (request.user.is_authenticated):
         return JsonResponse({"success": True})
 
     return JsonResponse({"success": False})
 
-
+@ensure_csrf_cookie
 def signOut(request):
     permission_classes = [IsAuthenticated]
     if (request.user.is_authenticated):
