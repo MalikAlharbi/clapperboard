@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { fetchInfo, fetchSeasons } from "../ShowsFetch";
 import AddToMyList from "./AddToMyList";
 import Auth from "./Auth";
-import Loading from './Loading'
+import Loading from "./Loading";
 import InfoPopup from "./InfoPopUp";
 import { getSavedEpisodes } from "../ApiRequest";
 
@@ -17,10 +17,7 @@ export default function ShowsCard({ showId, name, img, year, isLoggedIn }) {
   const addToListPopUpRef = useRef(null);
 
   function handleClickOutside(event) {
-    if (
-      infoPopUpRef.current &&
-      !infoPopUpRef.current.contains(event.target)
-    )
+    if (infoPopUpRef.current && !infoPopUpRef.current.contains(event.target))
       setIsPopOpen(false);
 
     if (
@@ -35,38 +32,30 @@ export default function ShowsCard({ showId, name, img, year, isLoggedIn }) {
 
     getSavedEpisodes(showId).then((data) => {
       if (data.length > 0) {
-        setIsWatching(true)
-        let next = data[data.length - 1]
-        let list = next.watched_episodes.split(',')
-        let last = list.lastIndexOf('true')
+        setIsWatching(true);
+        let next = data[data.length - 1];
+        let list = next.watched_episodes.split(",");
+        let last = list.lastIndexOf("true");
         if (list.length - 1 !== last) {
           if (next.season < 10)
-            setNextEpisode(`Next: S0${next.season}-E${last + 2}`)
-          else
-            setNextEpisode(`Next: S${next.season}-E${last + 2}`)
-        }
-
-        else if (seasons.length > next.season) {
-          let nextSeason = seasons[next.season]
+            setNextEpisode(`Next: S0${next.season}-E${last + 2}`);
+          else setNextEpisode(`Next: S${next.season}-E${last + 2}`);
+        } else if (seasons.length > next.season) {
+          let nextSeason = seasons[next.season];
           if (nextSeason.number < 10)
-            setNextEpisode(`Next: S0${nextSeason.number}-E${1}`)
-          else
-            setNextEpisode(`Next: S${nextSeason.number}-E${1}`)
-        }
-
-        else
-          setNextEpisode("Completed")
-
+            setNextEpisode(`Next: S0${nextSeason.number}-E${1}`);
+          else setNextEpisode(`Next: S${nextSeason.number}-E${1}`);
+        } else setNextEpisode("Completed");
       }
-    })
-
+    });
   }
 
   async function fetchData() {
+    await isLoggedIn;
     if (isLoggedIn) {
       await getEpisodes();
-      setIsLoading(false);
     }
+    setIsLoading(false);
   }
 
   useEffect(() => {
@@ -116,7 +105,9 @@ export default function ShowsCard({ showId, name, img, year, isLoggedIn }) {
               className="inline-flex border border-green-600 absoulte  items-center justify-center w-48 h-12 py-2 rounded-md"
               onClick={() => setIsAddOpen(true)}
             >
-              <p className="text-xl text-center text-green-600 ">{nextEpisode}</p>
+              <p className="text-xl text-center text-green-600 ">
+                {nextEpisode}
+              </p>
             </button>
           ) : (
             <button
