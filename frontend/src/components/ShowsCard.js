@@ -29,27 +29,34 @@ export default function ShowsCard({ showId, name, img, year, isLoggedIn }) {
 
   async function getEpisodes() {
     const seasons = await fetchSeasons(showId);
+    const data = await getSavedEpisodes(showId);
+    let flag = false;
+    if (seasons[0]?.number != 1) flag = true;
 
-    getSavedEpisodes(showId).then((data) => {
-      if (data.length > 0) {
-        setIsWatching(true);
-        let next = data[data.length - 1];
-        let list = next.watched_episodes.split(",");
-        let last = list.lastIndexOf("true");
-        if (list.length - 1 !== last) {
-          if (next.season < 10)
-            setNextEpisode(`Next: S0${next.season}-E${last + 2}`);
-          else setNextEpisode(`Next: S${next.season}-E${last + 2}`);
-        } else if (seasons.length > next.season) {
-          let nextSeason = seasons[next.season];
-          if (nextSeason.number < 10)
-            setNextEpisode(`Next: S0${nextSeason.number}-E${1}`);
-          else setNextEpisode(`Next: S${nextSeason.number}-E${1}`);
-        } else setNextEpisode("Completed");
+    if (data.length > 0) {
+      setIsWatching(true);
+      const next = data[data.length - 1];
+      const list = next.watched_episodes.split(",");
+      const last = list.lastIndexOf("true");
+
+      if (list.length - 1 !== last) {
+        const seasonNumber = flag
+          ? seasons[next.season - 1].number
+          : next.season;
+        const episodeNumber = last + 2;
+        const seasonString =
+          seasonNumber < 10 ? `0${seasonNumber}` : seasonNumber;
+        setNextEpisode(`Next: S${seasonString}-E${episodeNumber}`);
+      } else if (seasons.length > next.season) {
+        const nextSeason = seasons[next.season];
+        const seasonString =
+          nextSeason.number < 10 ? `0${nextSeason.number}` : nextSeason.number;
+        setNextEpisode(`Next: S${seasonString}-E01`);
+      } else {
+        setNextEpisode("Completed");
       }
-    });
+    }
   }
-
   async function fetchData() {
     await isLoggedIn;
     if (isLoggedIn) {
