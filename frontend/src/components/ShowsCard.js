@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 import { fetchInfo, fetchSeasons } from "../ShowsFetch";
 import AddToMyList from "./AddToMyList";
 import Auth from "./Auth";
@@ -15,6 +16,7 @@ export default function ShowsCard({ showId, name, img, year, isLoggedIn }) {
   const [isLoading, setIsLoading] = useState(true);
   const infoPopUpRef = useRef(null);
   const addToListPopUpRef = useRef(null);
+  const [imageLoading, setImageLoading] = useState(true);
 
   function handleClickOutside(event) {
     if (infoPopUpRef.current && !infoPopUpRef.current.contains(event.target))
@@ -76,6 +78,14 @@ export default function ShowsCard({ showId, name, img, year, isLoggedIn }) {
     };
   }, [infoPopUpRef, addToListPopUpRef]);
 
+  useEffect(() => {
+    const image = new Image();
+    image.src = img;
+    image.onload = () => {
+      setImageLoading(false);
+    };
+  }, [img]);
+
   const handleInfoButton = () => {
     setIsPopOpen(true);
     setIsLoading(true);
@@ -87,12 +97,26 @@ export default function ShowsCard({ showId, name, img, year, isLoggedIn }) {
 
   return (
     <div className="w-72 h-full max-h-100 rounded-lg shadow-lg flex flex-col items-center justify-center relative">
-      <img
-        className="max-h-82 h-full w-82 object-cover rounded-t-lg"
-        alt={`${name}`}
-        src={`${img}`}
-        loading="lazy"
-      />
+      {imageLoading ? (
+        <div className="animate-pulse bg-gray-600 h-[434px] w-[288px] rounded-t-lg flex items-center justify-center">
+          <svg
+            className="w-[100px] h-[90px] text-gray-200 dark:text-gray-200"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 20 18"
+          >
+            <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
+          </svg>
+        </div>
+      ) : (
+        <LazyLoadImage
+          className="max-h-82 h-full w-82 object-cover rounded-t-lg"
+          alt={name}
+          src={img}
+          loading="lazy"
+        />
+      )}
       <br />
 
       <label className="">
