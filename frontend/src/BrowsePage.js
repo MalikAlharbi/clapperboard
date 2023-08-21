@@ -1,21 +1,16 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { fetchSearch } from './ShowsFetch';
-import ItemList from './components/ItemList';
-import Sidebar from './components/Sidebar';
-import { is_authenticated } from "./ApiRequest"
+import React, { useEffect, useState, useContext } from "react";
+import { fetchSearch } from "./ShowsFetch";
+import ItemList from "./components/ItemList";
+import Sidebar from "./components/Sidebar";
+import { is_authenticated } from "./ApiRequest";
 import { AuthContext } from "./App";
 
 export default function BrowsePage() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showsJson, setShowsJson] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const { isLoggedIn } = useContext(AuthContext);
-
-
-
-
-
 
   const handleSearch = () => {
     setIsLoading(true);
@@ -26,18 +21,19 @@ export default function BrowsePage() {
     });
   };
 
-
-
   return (
-    <div className='flex flex-col h-screen'>
-      <Sidebar isLoggedIn={isLoggedIn} />
+    <div className="flex flex-col h-screen">
+      <div className="z-10">
+        <Sidebar isLoggedIn={isLoggedIn} />
+      </div>
+
       <div class="w-screen h-screen flex flex-col items-center overflow-y-scroll">
         <input
           type="text"
           placeholder="Search for Tv Shows..."
           onChange={(event) => setSearchQuery(event.target.value)}
           onKeyDown={(event) => {
-            if (event.key === 'Enter') {
+            if (event.key === "Enter") {
               handleSearch();
             }
           }}
@@ -51,7 +47,12 @@ export default function BrowsePage() {
         </button>
         <br />
 
-        <ItemList searched={searched} isLoading={isLoading} showsJson={showsJson} isLoggedIn={isLoggedIn} />
+        <ItemList
+          searched={searched}
+          isLoading={isLoading}
+          showsJson={showsJson}
+          isLoggedIn={isLoggedIn}
+        />
       </div>
     </div>
   );
