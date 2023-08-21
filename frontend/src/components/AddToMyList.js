@@ -20,26 +20,20 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   async function getSeasons() {
     const data = await fetchSeasons(showId);
 
-
     setSeasons(data);
     setClickedSeasons(new Array(data.length).fill(false)); // initialize clickedSeasons array with false values
-
   }
 
   async function getEpisodes(seasons) {
     let flag = false;
-    if (seasons[0]?.number != 1)
-      flag = true;
-
+    if (seasons[0]?.number != 1) flag = true;
 
     let numOfSeasons = seasons.length;
     const allEpisodes = await fetchEpoisdes(showId);
     let dbEpisodes = await getSavedEpisodes(showId);
     let eps = new Array(numOfSeasons).fill(null).map(() => []);
     let tracker = new Array(numOfSeasons).fill(null).map(() => []);
-    let totalSaved = new Array(numOfSeasons).fill(null).map(() => null);
-
-
+    let totalSaved = new Array(numOfSeasons).fill(0);
 
     if (flag) {
       allEpisodes.forEach((episode) => {
@@ -51,10 +45,7 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
           tracker[seasonIndex].push(false);
         }
       });
-    }
-    else {
-
-
+    } else {
       allEpisodes.forEach((episode) => {
         const seasonIndex = episode.season - 1;
 
@@ -90,8 +81,7 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   }, []);
 
   useEffect(() => {
-    if (seasons != null)
-      getEpisodes(seasons);
+    if (seasons != null) getEpisodes(seasons);
   }, [seasons]);
 
   function handleButton(index) {
@@ -152,7 +142,6 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
 
           <hr className="border-gray-600 mb-4" />
 
-
           {loading ? (
             <Loading />
           ) : (
@@ -163,33 +152,38 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
                   {seasons.map((season, index) => (
                     <div key={season.id} className="inline-block">
                       <button
-                        className={`${clickedSeasons[index]
-                          ? "bg-red-600 text-white"
-                          : totalSavedEpisodes[index] === season.episodeOrder
+                        className={`${
+                          clickedSeasons[index]
+                            ? "bg-red-600 text-white"
+                            : totalSavedEpisodes[index] === season.episodeOrder
                             ? "bg-green-600 text-white"
                             : "bg-gray-800 hover:bg-red-600 text-gray-300"
-                          } rounded-full py-2 px-4 font-semibold mr-2 mb-2`}
+                        } rounded-full py-2 px-4 font-semibold mr-2 mb-2`}
                         onClick={() => handleButton(index)}
                       >
                         <span
-                          className={`${totalSavedEpisodes[index]
-                            ? "bg-blue-600"
-                            : "bg-gray-600 hover:bg-blue-600"
-                            } rounded-full w-6 h-6 inline-flex items-center justify-center mr-2`}
+                          className={`${
+                            totalSavedEpisodes[index]
+                              ? "bg-blue-600"
+                              : "bg-gray-600 hover:bg-blue-600"
+                          } rounded-full w-6 h-6 inline-flex items-center justify-center mr-2`}
                           onClick={() => {
                             setClickerReset(!clickerReset);
                           }}
                         />
                         <span className=" text-lg">
-                          Season {season.number} ({totalSavedEpisodes[index] || 0}
-                          /{season.episodeOrder})
+                          Season {season.number} (
+                          {totalSavedEpisodes[index] || 0}/
+                          {season.episodeOrder
+                            ? season.episodeOrder
+                            : episodes[index]?.length}
+                          )
                         </span>
                       </button>
                     </div>
                   ))}
                 </div>
               </div>
-
 
               {/* episodes cards */}
               <div className="col-span-1 mt-9 max-w-2xl">
@@ -207,7 +201,6 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
               </div>
             </>
           )}
-
         </div>
       </div>
     </div>
