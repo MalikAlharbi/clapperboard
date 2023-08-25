@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth import authenticate, login, logout
+from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
 from django.http import JsonResponse
@@ -45,6 +46,15 @@ class UserEpisodes(generics.ListAPIView):
         queryset = queryset.order_by('season')
         return queryset
 
+class LatestWatchedEpisodes(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserShowSerializer
+
+    def get_queryset(self):
+        latest_modified_records = UserShow.objects.order_by('-modified_at')[:3]
+        return latest_modified_records
+
+
 
 class UserShowUpdate(APIView):
     permission_classes = [IsAuthenticated]
@@ -73,11 +83,13 @@ class UserShowUpdate(APIView):
                 else:
                     newData = queryset.first()
                     newData.watched_episodes = watched_episodes
-                    newData.save(update_fields=['watched_episodes'])
+                    newData.modified_at = timezone.now()
+                    newData.save(update_fields=['watched_episodes','modified_at'])
                     return Response(UserShowSerializer(newData).data, status=status.HTTP_200_OK)
             elif not all(boolean == 'false' for boolean in watched_episodes_list):
                 newData = UserShow(user=user_id,
                                    show=show, season=season, watched_episodes=watched_episodes)
+                newData.modified_at = timezone.now()
                 newData.save()
                 return Response(UserShowSerializer(newData).data, status=status.HTTP_201_CREATED)
         else:
@@ -141,3 +153,5 @@ def signOut(request):
         return JsonResponse({"success": True})
 
     return JsonResponse({"success": False, "error": "error occured"})
+
+

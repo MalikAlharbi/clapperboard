@@ -8,3 +8,4 @@ class UserShow(models.Model):
     show = models.IntegerField()
     season = models.IntegerField()
     watched_episodes = models.TextField(default='')
+    modified_at = models.DateTimeField(auto_now=True)
