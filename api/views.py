@@ -25,10 +25,6 @@ class UserShows(generics.ListAPIView):
 
     def get_queryset(self):
         user_id = self.request.user
-        # queryset = UserShow.objects.filter(user=user_id).order_by('show')
-        # unique_shows = [next(group)
-        #                 for key, group in groupby(queryset, lambda x: x.show)]
-
         queryset = UserShow.objects.filter(
             user=user_id).values('show').distinct()
         return queryset
@@ -51,7 +47,8 @@ class LatestWatchedEpisodes(generics.ListAPIView):
     serializer_class = UserShowSerializer
 
     def get_queryset(self):
-        latest_modified_records = UserShow.objects.order_by('-modified_at')[:3]
+        userEpisodes = UserShow.objects.filter(user=self.request.user)
+        latest_modified_records = userEpisodes.order_by('-modified_at')[:3]
         return latest_modified_records
 
 
