@@ -26,7 +26,7 @@ class UserShows(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.request.user
         queryset = UserShow.objects.filter(
-            user=user_id).values('show').distinct()
+            user=user_id).values('showId').distinct()
         return queryset
 
 
@@ -38,7 +38,7 @@ class UserEpisodes(generics.ListAPIView):
         user_id = self.request.user
         show = self.request.GET.get('show')
         show_id = int(show.strip().rstrip('/'))
-        queryset = UserShow.objects.filter(user=user_id, show=show_id)
+        queryset = UserShow.objects.filter(user=user_id, showId=show_id)
         queryset = queryset.order_by('season')
         return queryset
 
@@ -62,14 +62,15 @@ class UserShowUpdate(APIView):
         if serializer.is_valid():
 
             user_id = self.request.user
-            show = int(serializer.validated_data.get('show'))
+            showId = int(serializer.validated_data.get('showId'))
+            showName = serializer.validated_data.get('showName')
             season = int(serializer.validated_data.get('season'))
             watched_episodes = serializer.validated_data.get(
                 'watched_episodes')
             watched_episodes_list = watched_episodes.split(",")
 
             queryset = UserShow.objects.filter(
-                user=user_id, show=show, season=season)
+                user=user_id, showId=showId, season=season)
             # if show is already in the database then update else create a new row
             if queryset.exists():
                 # when user unclick a season delete it from db
@@ -85,7 +86,7 @@ class UserShowUpdate(APIView):
                     return Response(UserShowSerializer(newData).data, status=status.HTTP_200_OK)
             elif not all(boolean == 'false' for boolean in watched_episodes_list):
                 newData = UserShow(user=user_id,
-                                   show=show, season=season, watched_episodes=watched_episodes)
+                                   showId=showId,showName=showName, season=season, watched_episodes=watched_episodes)
                 newData.modified_at = timezone.now()
                 newData.save()
                 return Response(UserShowSerializer(newData).data, status=status.HTTP_201_CREATED)

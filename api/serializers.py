@@ -5,16 +5,16 @@ from .models import UserShow
 class UserShowSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserShow
-        fields = ('id', 'user', 'show', 'season', 'watched_episodes', 'modified_at')
+        fields = ('id', 'user', 'showId','showName', 'season', 'watched_episodes', 'modified_at')
 
 
 class UserShowsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserShow
-        fields = ('id', 'show')
+        fields = ('id', 'showId','showName')
 
 
 class UserShowUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserShow
-        fields = ('show', 'season', 'watched_episodes','modified_at')
+        fields = ('showId', 'showName', 'season', 'watched_episodes','modified_at')
