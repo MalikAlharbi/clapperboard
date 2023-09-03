@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth import authenticate, login, logout
+from django.db.models import Count
 from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
@@ -42,15 +43,26 @@ class UserEpisodes(generics.ListAPIView):
         queryset = queryset.order_by('season')
         return queryset
 
+from django.db.models import Max, Subquery, OuterRef
+
 class LatestWatchedEpisodes(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserShowSerializer
 
     def get_queryset(self):
-        userEpisodes = UserShow.objects.filter(user=self.request.user)
-        latest_modified_records = userEpisodes.order_by('-modified_at')[:3]
-        return latest_modified_records
+        # if show appear more than once, take latest modified
+        latest_modifications = UserShow.objects.filter(
+            user=self.request.user, 
+            showId=OuterRef('showId')
+        ).order_by('showId').values('showId').annotate(
+            latest_modified_at=Max('modified_at')
+        ).values('latest_modified_at')
+        userShows = UserShow.objects.filter(
+            user=self.request.user, 
+            modified_at=Subquery(latest_modifications)
+        )
 
+        return userShows
 
 
 class UserShowUpdate(APIView):
@@ -65,6 +77,7 @@ class UserShowUpdate(APIView):
             showId = int(serializer.validated_data.get('showId'))
             showName = serializer.validated_data.get('showName')
             season = int(serializer.validated_data.get('season'))
+            modified_index = serializer.validated_data.get('modified_index')
             watched_episodes = serializer.validated_data.get(
                 'watched_episodes')
             watched_episodes_list = watched_episodes.split(",")
@@ -82,11 +95,12 @@ class UserShowUpdate(APIView):
                     newData = queryset.first()
                     newData.watched_episodes = watched_episodes
                     newData.modified_at = timezone.now()
-                    newData.save(update_fields=['watched_episodes','modified_at'])
+                    newData.modified_index = modified_index
+                    newData.save(update_fields=['watched_episodes','modified_at', 'modified_index'])
                     return Response(UserShowSerializer(newData).data, status=status.HTTP_200_OK)
             elif not all(boolean == 'false' for boolean in watched_episodes_list):
                 newData = UserShow(user=user_id,
-                                   showId=showId,showName=showName, season=season, watched_episodes=watched_episodes)
+                                   showId=showId,showName=showName, season=season, watched_episodes=watched_episodes, modified_index=modified_index)
                 newData.modified_at = timezone.now()
                 newData.save()
                 return Response(UserShowSerializer(newData).data, status=status.HTTP_201_CREATED)

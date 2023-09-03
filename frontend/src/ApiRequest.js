@@ -121,9 +121,9 @@ export const getSavedEpisodes = async (show_id) => {
 export const postSavedEpisodes = async (
   showId,
   savedEpisodes,
-  seasonCurrentIndex
+  seasonCurrentIndex,
+  dbIndex
 ) => {
-  console.log(showId, savedEpisodes, seasonCurrentIndex);
   let showName = await fetchName(showId);
   const csrftoken = getCookie("csrftoken");
   fetch("/api/saveshow", {
@@ -137,6 +137,7 @@ export const postSavedEpisodes = async (
       showName: showName,
       season: seasonCurrentIndex + 1,
       watched_episodes: savedEpisodes.toString(),
+      modified_index: dbIndex,
     }),
   })
     .then((response) => response.json())

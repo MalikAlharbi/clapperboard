@@ -10,6 +10,7 @@ export default function EpisodesCard({
   seasons,
 }) {
   const [savedEpisodes, setSavedEpisodes] = useState(tracker);
+  const [dbIndex, setDbIndex] = useState(-1);
 
   useEffect(() => {
     setTotalSavedEpisodes((prevState) => {
@@ -25,7 +26,8 @@ export default function EpisodesCard({
       postSavedEpisodes(
         showId,
         savedEpisodes[seasonCurrentIndex],
-        seasonCurrentIndex
+        seasonCurrentIndex,
+        dbIndex
       );
   }, [savedEpisodes]);
 
@@ -43,11 +45,13 @@ export default function EpisodesCard({
 
   function handleUnknownSave(index, episode) {
     let epSeason = handleUnknownSeasons(episode);
+    let epIndex = 0;
     setSavedEpisodes((prevState) => {
       const newState = prevState.map((seasonEpisodes, seasonIndex) => {
         if (seasonIndex === epSeason) {
           return seasonEpisodes.map((episodeSaved, episodeIndex) => {
             if (episodeIndex === index) {
+              epIndex = !episodeSaved ? episodeIndex : -1;
               return !episodeSaved; // toggle the saved state of the episode
             } else {
               return episodeSaved;
@@ -59,14 +63,17 @@ export default function EpisodesCard({
       });
       return newState;
     });
+    setDbIndex(epIndex);
   }
 
   function handleOneSave(index) {
+    let epIndex = 0;
     setSavedEpisodes((prevState) => {
       const newState = prevState.map((seasonEpisodes, seasonIndex) => {
         if (seasonIndex === episodes[index].season - 1) {
           return seasonEpisodes.map((episodeSaved, episodeIndex) => {
             if (episodeIndex === index) {
+              epIndex = !episodeSaved ? episodeIndex : -1;
               return !episodeSaved; // toggle the saved state of the episode
             } else {
               return episodeSaved;
@@ -78,6 +85,7 @@ export default function EpisodesCard({
       });
       return newState;
     });
+    setDbIndex(epIndex);
   }
 
   function handleAllSave() {
@@ -96,6 +104,8 @@ export default function EpisodesCard({
       });
       return newState;
     });
+
+    setDbIndex(-1);
   }
 
   return (
