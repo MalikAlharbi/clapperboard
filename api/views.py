@@ -1,6 +1,6 @@
 import json
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import Count
+from django.db.models import Max, Subquery, OuterRef
 from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
@@ -43,24 +43,23 @@ class UserEpisodes(generics.ListAPIView):
         queryset = queryset.order_by('season')
         return queryset
 
-from django.db.models import Max, Subquery, OuterRef
 
 class LatestWatchedEpisodes(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserShowSerializer
 
     def get_queryset(self):
-        # if show appear more than once, take latest modified
         latest_modifications = UserShow.objects.filter(
             user=self.request.user, 
             showId=OuterRef('showId')
         ).order_by('showId').values('showId').annotate(
             latest_modified_at=Max('modified_at')
         ).values('latest_modified_at')
+        
         userShows = UserShow.objects.filter(
-            user=self.request.user, 
-            modified_at=Subquery(latest_modifications)
-        )
+            user=self.request.user,
+            modified_at__in=Subquery(latest_modifications)
+        ).order_by('-modified_at')[:3]
 
         return userShows
 
