@@ -1,9 +1,10 @@
 from django.urls import include, path
-from .views import AllUsers, UserShowUpdate, UserShows, UserEpisodes, LatestWatchedEpisodes, signIn, signUp, is_authenticated, signOut
+from .views import AllUsers, UserShowUpdate, UserShows, TopShows , UserEpisodes, LatestWatchedEpisodes, signIn, signUp, is_authenticated, signOut
 urlpatterns = [
     path('allusers', AllUsers.as_view()),
     path('user-shows/',UserShows.as_view()),
     path('user-episodes/', UserEpisodes.as_view()),
+    path('top-shows', TopShows.as_view()),
     path('saveshow', UserShowUpdate.as_view()),
     path('latest-episodes', LatestWatchedEpisodes.as_view()),
     path('signin', signIn, name='signin'),

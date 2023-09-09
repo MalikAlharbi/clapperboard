@@ -14,6 +14,19 @@ function getCookie(name) {
   return cookieValue;
 }
 
+export const topShows = async () => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/top-shows`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  });
+  const data = await response.json();
+  return data;
+};
+
 export const signIn = async (username, password) => {
   if (!username || !password) throw new Error("Missing username or password");
   const csrftoken = getCookie("csrftoken");
@@ -148,6 +161,7 @@ export default [
   signIn,
   signUp,
   is_authenticated,
+  topShows,
   latestEpisodes,
   getUserShows,
   getSavedEpisodes,

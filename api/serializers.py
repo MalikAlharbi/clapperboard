@@ -18,3 +18,11 @@ class UserShowUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserShow
         fields = ('showId', 'showName', 'season', 'watched_episodes','modified_at','modified_index')
+
+class TopShowsSerializer(serializers.ModelSerializer):
+    showId = serializers.IntegerField()
+    showCount = serializers.IntegerField()
+    class Meta:
+        model = UserShow
+        fields = ('showId','showCount')
+        

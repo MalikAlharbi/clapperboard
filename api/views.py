@@ -1,6 +1,6 @@
 import json
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import Max, Subquery, OuterRef
+from django.db.models import Max, Subquery, OuterRef, Count
 from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
@@ -9,7 +9,7 @@ from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from .serializers import UserShowSerializer, UserShowsSerializer, UserShowUpdateSerializer
+from .serializers import UserShowSerializer, UserShowsSerializer, UserShowUpdateSerializer, TopShowsSerializer
 from .models import UserShow
 
 
@@ -62,6 +62,15 @@ class LatestWatchedEpisodes(generics.ListAPIView):
         ).order_by('-modified_at')[:3]
 
         return userShows
+
+from django.db.models import Count
+
+class TopShows(generics.ListAPIView):
+    permission_classes = []
+    serializer_class = TopShowsSerializer
+
+    def get_queryset(self):
+        return UserShow.objects.values('showId').annotate(showCount=Count('user', distinct=True)).order_by('-showCount')[:3]
 
 
 class UserShowUpdate(APIView):
