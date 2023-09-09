@@ -15,7 +15,7 @@ export default function ItemList({ searched, isLoading, showsJson, isLoggedIn })
       {isLoading ? (
         <Loading />
       ) : searched ? (
-        filteredShows.length > 0 && (
+        filteredShows?.length > 0 && (
           <div className="grid grid-cols-3 gap-7">
             {filteredShows.map((show) => (
               <ShowsCard
@@ -29,7 +29,7 @@ export default function ItemList({ searched, isLoading, showsJson, isLoggedIn })
             ))}
           </div>
         )
-      ) : showsJson.length > 0 && (
+      ) : showsJson?.length > 0 && (
         <div className="grid grid-cols-3 gap-7">
           {showsJson.map((show) => (
             <ShowsCard
