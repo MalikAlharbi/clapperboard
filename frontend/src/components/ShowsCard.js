@@ -111,7 +111,7 @@ export default function ShowsCard({ showId, name, img, year, isLoggedIn }) {
         </div>
       ) : (
         <LazyLoadImage
-          className="max-h-82 h-full w-82 object-cover rounded-t-lg"
+          className="h-[434px] w-[288px] object-cover rounded-t-lg"
           alt={name}
           src={img}
           loading="lazy"
