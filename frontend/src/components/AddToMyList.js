@@ -19,7 +19,6 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
 
   async function getSeasons() {
     const data = await fetchSeasons(showId);
-
     setSeasons(data);
     setClickedSeasons(new Array(data.length).fill(false)); // initialize clickedSeasons array with false values
   }
@@ -69,20 +68,21 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
 
     setTracker(tracker);
     setTotalSavedEpisodes(totalSaved);
-    setLoading(false);
   }
 
   useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      await getSeasons();
-    }
-    fetchData();
+    getSeasons();
   }, []);
 
   useEffect(() => {
-    if (seasons != null) getEpisodes(seasons);
+    if (seasons != null) {
+      getEpisodes(seasons);
+    }
   }, [seasons]);
+
+  useEffect(() => {
+    if (totalSavedEpisodes.length > 0) setLoading(false);
+  }, [totalSavedEpisodes]);
 
   function handleButton(index) {
     setIsClicked(true);
