@@ -10,10 +10,12 @@ export default function Auth(props) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [successSignUp, setSuccessSignUp] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const handleSignIn = async (event) => {
     event.preventDefault();
     try {
-      const response = await signIn(username, password);
+      const response = await signIn(username, password, rememberMe);
+      console.log(rememberMe)
       if (response.success) {
         location.reload();
       } else {
@@ -27,7 +29,7 @@ export default function Auth(props) {
   const handleSignUp = async (event) => {
     event.preventDefault();
     try {
-      const response = await signUp(username, email, password);
+      const response = await signUp(username, email, password, rememberMe);
       if (response.success) {
         setSuccessSignUp(true);
         window.location.replace("/");
@@ -48,6 +50,7 @@ export default function Auth(props) {
     setEmail("");
     setPassword("");
     setError("");
+    setRememberMe(false);
   }, [login]);
 
   return (
@@ -127,13 +130,11 @@ export default function Auth(props) {
           />
           <br />
 
-          <input type="checkbox" id="remember" name="remember" />
-          <label
-            htmlFor="remember"
-            className="ml-2 text-gray-500 dark:text-gray-300"
-          >
-            Remember Me
-          </label>
+          <div class="inline items-center">
+            <input id="remember" type="checkbox" value="" class="w-4 h-4 border rounded dark:bg-gray-700 dark:border-gray-600" onClick={() => { setRememberMe(event.target.checked) }} />
+            <label for="remember" class="ml-2 text-sm font-medium text-white">Remember me</label>
+          </div>
+
 
           {login ? (
             // Render login form

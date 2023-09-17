@@ -27,7 +27,7 @@ export const topShows = async () => {
   return data;
 };
 
-export const signIn = async (username, password) => {
+export const signIn = async (username, password, rememberMe) => {
   if (!username || !password) throw new Error("Missing username or password");
   const csrftoken = getCookie("csrftoken");
   const response = await fetch("/api/signin", {
@@ -39,13 +39,14 @@ export const signIn = async (username, password) => {
     body: JSON.stringify({
       username: username,
       password: password,
+      rememberMe: rememberMe,
     }),
   });
   const data = await response.json();
   return data;
 };
 
-export const signUp = async (username, email, password) => {
+export const signUp = async (username, email, password, rememberMe) => {
   if (!username || !password || !email)
     throw new Error("Missing username or password");
   const csrftoken = getCookie("csrftoken");
@@ -60,6 +61,7 @@ export const signUp = async (username, email, password) => {
       username: username,
       email: email,
       password: password,
+      rememberMe: rememberMe,
     }),
   });
   const data = await response.json();

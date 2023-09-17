@@ -50,12 +50,12 @@ class LatestWatchedEpisodes(generics.ListAPIView):
 
     def get_queryset(self):
         latest_modifications = UserShow.objects.filter(
-            user=self.request.user, 
+            user=self.request.user,
             showId=OuterRef('showId')
         ).order_by('showId').values('showId').annotate(
             latest_modified_at=Max('modified_at')
         ).values('latest_modified_at')
-        
+
         userShows = UserShow.objects.filter(
             user=self.request.user,
             modified_at__in=Subquery(latest_modifications)
@@ -63,7 +63,6 @@ class LatestWatchedEpisodes(generics.ListAPIView):
 
         return userShows
 
-from django.db.models import Count
 
 class TopShows(generics.ListAPIView):
     permission_classes = []
@@ -104,16 +103,18 @@ class UserShowUpdate(APIView):
                     newData.watched_episodes = watched_episodes
                     newData.modified_at = timezone.now()
                     newData.modified_index = modified_index
-                    newData.save(update_fields=['watched_episodes','modified_at', 'modified_index'])
+                    newData.save(update_fields=[
+                                 'watched_episodes', 'modified_at', 'modified_index'])
                     return Response(UserShowSerializer(newData).data, status=status.HTTP_200_OK)
             elif not all(boolean == 'false' for boolean in watched_episodes_list):
                 newData = UserShow(user=user_id,
-                                   showId=showId,showName=showName, season=season, watched_episodes=watched_episodes, modified_index=modified_index)
+                                   showId=showId, showName=showName, season=season, watched_episodes=watched_episodes, modified_index=modified_index)
                 newData.modified_at = timezone.now()
                 newData.save()
                 return Response(UserShowSerializer(newData).data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @ensure_csrf_cookie
 def signIn(request):
@@ -121,12 +122,16 @@ def signIn(request):
         data = json.loads(request.body)
         username = data["username"]
         password = data["password"]
+        rememberMe = data["rememberMe"]
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            if not rememberMe:
+                request.session.set_expiry(0)
             return JsonResponse({'success': True})
 
         return JsonResponse({'success': False})
+
 
 @ensure_csrf_cookie
 def signUp(request):
@@ -135,6 +140,7 @@ def signUp(request):
         username = data["username"]
         password = data["password"]
         email = data["email"]
+        rememberMe = data["rememberMe"]
         invalid_username = User.objects.filter(username=username).exists()
         invalid_email = User.objects.filter(email=email).exists()
 
@@ -154,9 +160,12 @@ def signUp(request):
             username=username, email=email, password=password)
         if user is not None:
             login(request, user)
+            if not rememberMe:
+                request.session.set_expiry(0)
             return JsonResponse({'success': True})
 
         return JsonResponse({'success': False})
+
 
 @ensure_csrf_cookie
 def is_authenticated(request):
@@ -164,6 +173,7 @@ def is_authenticated(request):
         return JsonResponse({"success": True})
 
     return JsonResponse({"success": False})
+
 
 @ensure_csrf_cookie
 def signOut(request):
@@ -173,5 +183,3 @@ def signOut(request):
         return JsonResponse({"success": True})
 
     return JsonResponse({"success": False, "error": "error occured"})
-
-
