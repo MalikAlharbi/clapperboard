@@ -86,7 +86,7 @@ export default function Auth(props) {
             Username
           </label>
           <br />
-          <input
+          <input required
             type="text"
             id="username"
             name="username"
@@ -102,7 +102,7 @@ export default function Auth(props) {
                 Email
               </label>
               <br />
-              <input
+              <input required
                 type="email"
                 id="email"
                 name="email"
@@ -119,7 +119,7 @@ export default function Auth(props) {
             Password
           </label>
           <br />
-          <input
+          <input required
             type="password"
             id="password"
             name="password"
