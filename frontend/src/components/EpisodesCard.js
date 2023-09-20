@@ -40,7 +40,7 @@ export default function EpisodesCard({
   }, [savedEpisodes]);
 
   useEffect(() => {
-    if (clickerReset) handleAllSave();
+    if (clickerReset != null) handleAllSave();
   }, [clickerReset]);
 
   function handleUnknownSeasons(episode) {

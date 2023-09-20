@@ -15,7 +15,7 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
   const [loading, setLoading] = useState(true);
   const [isClicked, setIsClicked] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
-  const [clickerReset, setClickerReset] = useState(false);
+  const [clickerReset, setClickerReset] = useState(null);
 
   async function getSeasons() {
     const data = await fetchSeasons(showId);
@@ -109,6 +109,16 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
     });
   }
 
+  async function handleRester(index) {
+    if (clickerReset === null) setClickerReset(true);
+    else
+      setClickerReset((prevState) => !prevState);
+
+    setCurrentIndex(index);
+    setIsClicked(true);
+
+  }
+
 
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 z-50  justify-center items-center pl-10 pr-10 max-h-2xl h-screen w-screen grid place-items-center overflow-y-scroll">
@@ -153,7 +163,6 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
               <div className="w-[250px] max-h-[650px] overflow-y-auto scroll-smooth col-span-1">
                 {seasons.map((season, index) => (
                   <div key={season.id} className="flex flex-row left-0 mb-2">
-                    {/* circle bug */}
                     <div className="inline-block">
                       <button
                         className={`${totalSavedEpisodes[index]
@@ -161,7 +170,7 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
                           : "bg-gray-600 hover:bg-blue-600"
                           } rounded-full w-4 h-4 items-center mr-4`}
                         onClick={() => {
-                          setClickerReset(!clickerReset)
+                          handleRester(index)
                         }}
                       />
 
