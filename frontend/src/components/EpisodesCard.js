@@ -12,14 +12,22 @@ export default function EpisodesCard({
   const [savedEpisodes, setSavedEpisodes] = useState(tracker);
   const [dbIndex, setDbIndex] = useState(-1);
 
-  useEffect(() => {
+
+  const setTotal = async () => {
     setTotalSavedEpisodes((prevState) => {
       const newState = [...prevState];
-      newState[seasonCurrentIndex] =
-        savedEpisodes[seasonCurrentIndex]?.filter(Boolean).length;
+      newState[seasonCurrentIndex] = savedEpisodes[seasonCurrentIndex]?.filter(Boolean).length;
       return newState;
     });
+  };
+
+  useEffect(() => {
+    setTotal();
   }, [savedEpisodes]);
+
+  useEffect(() => {
+    setTotal();
+  }, []);
 
   useEffect(() => {
     if (savedEpisodes)
@@ -39,7 +47,6 @@ export default function EpisodesCard({
     const seasonIndex = seasons.findIndex(function (item) {
       return Object.values(item).includes(episode.season);
     });
-    console.log(seasonIndex);
     return seasonIndex;
   }
 
@@ -110,35 +117,28 @@ export default function EpisodesCard({
 
   return (
     <div
-      className="w-full"
-      style={{
-        maxHeight: "calc(100vh - 200px)",
-        overflowY: "scroll",
-        position: "relative",
-      }}
+      className="max-w-[660px]  max-h-[650px] overflow-y-auto scroll-smooth"
     >
       {episodes?.map((episode, index) => (
-        <div key={episode.id} className="mb-4">
-          <div className="bg-gray-900 rounded-lg shadow-md overflow-hidden">
-            <div className="bg-gray-800 p-4 flex justify-between">
-              <h2 className="text-xl font-semibold text-white">
+        <div key={episode.id} className="m-4">
+          <div className=" rounded-lg shadow-md overflow-hidden">
+            <div className=" p-2 flex justify-between">
+              <h2 className="text-l font-semibold text-white">
                 {/* circle for episodes */}
                 {seasons[0].number > 0 ? (
                   <button
-                    className={`${
-                      savedEpisodes[handleUnknownSeasons(episode)][index]
-                        ? "bg-green-500"
-                        : "bg-gray-600 hover:bg-red-600"
-                    } rounded-full w-5 h-5 mr-2 mb-2`}
+                    className={`${savedEpisodes[handleUnknownSeasons(episode)][index]
+                      ? "bg-green-500"
+                      : "bg-gray-600 hover:bg-red-600"
+                      } rounded-full w-5 h-5 mr-2 mb-2`}
                     onClick={() => handleUnknownSave(index, episode)}
                   />
                 ) : (
                   <button
-                    className={`${
-                      savedEpisodes[episode.season - 1][index]
-                        ? "bg-green-500"
-                        : "bg-gray-600 hover:bg-red-600"
-                    } rounded-full w-5 h-5 mr-2 mb-2`}
+                    className={`${savedEpisodes[episode.season - 1][index]
+                      ? "bg-green-500"
+                      : "bg-gray-600 hover:bg-red-600"
+                      } rounded-full w-5 h-5 mr-2 mb-2`}
                     onClick={() => handleOneSave(index)}
                   />
                 )}
@@ -163,6 +163,8 @@ export default function EpisodesCard({
               </span>
             </div>
           </div>
+          <hr className="border-red-600 mb-4 mt-4" />
+
         </div>
       ))}
     </div>
