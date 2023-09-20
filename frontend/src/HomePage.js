@@ -66,14 +66,15 @@ export default function HomePage() {
           <span className="text-white font-mono">
             most watched shows this week
           </span>
-          <div className="mx-auto mt-6">
-            <ItemList
-              isLoading={loading}
-              showsJson={topShowsData}
-              isLoggedIn={isLoggedIn}
-            />
-          </div>
         </div>
+        <div className="mx-auto mt-6">
+          <ItemList
+            isLoading={loading}
+            showsJson={topShowsData}
+            isLoggedIn={isLoggedIn}
+          />
+        </div>
+
       </div>
     </div>
   );
