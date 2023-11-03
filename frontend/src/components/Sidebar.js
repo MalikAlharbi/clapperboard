@@ -6,6 +6,7 @@ import { BsFillEnvelopePaperHeartFill } from "react-icons/bs";
 import { SlScreenDesktop } from "react-icons/sl";
 import { signOut } from "../ApiRequest";
 import Auth from "./Auth";
+import Profile from "./Profile";
 
 export default function Sidebar({ isLoggedIn }) {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -44,9 +45,10 @@ export default function Sidebar({ isLoggedIn }) {
         aria-label="Sidebar"
       >
         <div className="h-full px-3 py-4 overflow-y-auto ">
+          {isLoggedIn && <Profile />}
           {isAuthOpen && <Auth authRef={authRef} login={authWindow} />}
 
-          <ul className="space-y-2 font-medium">
+          <ul className="space-y-2 font-medium mt-5">
             <li>
               <Link
                 to="/"
@@ -82,17 +84,6 @@ export default function Sidebar({ isLoggedIn }) {
                       Browse
                     </span>
                   </Link>
-                </li>
-                <li className="border-t border-gray-600 pt-2">
-                  <a
-                    href="#"
-                    className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-red-700 dark:hover:bg-red-700 group"
-                  >
-                    <AiOutlineUser size={20} />
-                    <span className="flex-1 ml-3 whitespace-nowrap">
-                      My Account
-                    </span>
-                  </a>
                 </li>
                 <li
                   className="border-t border-gray-600 pt-2"

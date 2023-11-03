@@ -159,6 +159,45 @@ export const postSavedEpisodes = async (
     .then((data) => console.log(data));
 };
 
+export const uploadImage = async (formData) => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch("/api/upload", {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": csrftoken,
+    },
+    body: formData,
+  });
+  const data = await response.json();
+  return data;
+};
+
+export const getImg = async () => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/getImg`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  });
+  const data = await response.json();
+  return data.url;
+};
+
+export const getUsername = async () => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/getUsername`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  });
+  const data = await response.json();
+  return data.username;
+};
+
 export default [
   signIn,
   signUp,
@@ -168,4 +207,7 @@ export default [
   getUserShows,
   getSavedEpisodes,
   postSavedEpisodes,
+  uploadImage,
+  getImg,
+  getUsername,
 ];

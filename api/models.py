@@ -11,3 +11,8 @@ class UserShow(models.Model):
     watched_episodes = models.TextField(default='')
     modified_at = models.DateTimeField(auto_now=True)
     modified_index = models.IntegerField(default=-1)
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_img = models.ImageField(upload_to='users/profile_images/%Y/%m/%d',blank=True)

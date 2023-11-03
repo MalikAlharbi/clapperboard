@@ -10,8 +10,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .serializers import UserShowSerializer, UserShowsSerializer, UserShowUpdateSerializer, TopShowsSerializer
-from .models import UserShow
-
+from .models import UserShow, Profile
+from rest_framework.decorators import api_view
 
 class AllUsers(generics.ListAPIView):
     permission_classes = [IsAdminUser]
@@ -29,6 +29,8 @@ class UserShows(generics.ListAPIView):
         queryset = UserShow.objects.filter(
             user=user_id).values('showId').distinct()
         return queryset
+
+
 
 
 class UserEpisodes(generics.ListAPIView):
@@ -183,3 +185,43 @@ def signOut(request):
         return JsonResponse({"success": True})
 
     return JsonResponse({"success": False, "error": "error occured"})
+
+
+
+def upload_image(request):
+    permission_classes = [IsAuthenticated]
+    if request.method == 'POST' and request.FILES.get('file'):
+        user_id = request.user
+        user_profile = Profile.objects.filter(user=user_id).first()
+
+        if user_profile is None:
+            # Create a new Profile object for the user if it doesn't exist
+            user_profile = Profile.objects.create(user=user_id)
+
+        image_file = request.FILES['file']
+        user_profile.profile_img = image_file
+        user_profile.save()
+
+        return JsonResponse({"success": True})
+
+    else:
+        return JsonResponse({"success": False, "error": "An error occurred"})
+
+
+
+
+@api_view(['GET'])
+def getImg(request):
+    user_profile = Profile.objects.filter(user=request.user).first()
+    if user_profile is None:
+        return JsonResponse({"success": False, "error": "no img found"})
+
+    return JsonResponse({"success":True, "url":user_profile.profile_img.url})
+
+
+
+@api_view(['GET'])
+def getUsername(request):
+    return JsonResponse({"success":True, "username":request.user.username})
+
+    
