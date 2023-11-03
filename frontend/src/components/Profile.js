@@ -79,9 +79,9 @@ export default function Profile() {
             />
           )}
 
-          <text className=" text-red-700 font-mono relative left-5">
+          <b className=" text-red-700 font-mono relative left-5">
             {username}
-          </text>
+          </b>
         </>
       )}
     </>

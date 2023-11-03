@@ -45,9 +45,9 @@ export default function ShowsCarousel({ showsJson }) {
     <>
       {!loading ? (
         latestEpisodes.length > 0 && (
-          <Carousel pauseOnHover>
+          <Carousel>
             {latestEpisodes.map((show, index) => (
-              <div className="relative">
+              <div className="relative" key={index}>
                 <div className="flex justify-center items-center">
                   <img
                     src={show?.image?.original}

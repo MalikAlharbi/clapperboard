@@ -51,9 +51,8 @@ export default function HomePage() {
             <div className="mb-10">
               <div>
                 <p className="text-white items-center text-center font-mono mb-5">
-                  <span className="inline-block">
+                  <span className="inline-block border-b border-red-600">
                     Recently watched episodes
-                    <div className="border-b border-red-600"></div>
                   </span>
                 </p>
               </div>
