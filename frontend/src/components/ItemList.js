@@ -16,7 +16,7 @@ export default function ItemList({ searched, isLoading, showsJson, isLoggedIn })
         <Loading />
       ) : searched ? (
         filteredShows?.length > 0 && (
-          <div className="grid grid-cols-3 gap-7">
+          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
             {filteredShows.map((show) => (
               <ShowsCard
                 key={show["show"]["id"]}
@@ -30,7 +30,7 @@ export default function ItemList({ searched, isLoading, showsJson, isLoggedIn })
           </div>
         )
       ) : showsJson?.length > 0 && (
-        <div className="grid grid-cols-3 gap-7">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
           {showsJson.map((show) => (
             <ShowsCard
               key={show["id"]}
