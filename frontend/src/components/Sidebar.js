@@ -15,7 +15,7 @@ export default function Sidebar({ isLoggedIn }) {
 
   async function signOutHandler() {
     let signedOut = await signOut();
-    if (signedOut) location.reload();
+    if (signedOut) location.replace('/');
   }
 
   function handleSignIn() {
