@@ -23,10 +23,6 @@ export default function BrowsePage() {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="z-10">
-        <Sidebar isLoggedIn={isLoggedIn} />
-      </div>
-
       <div class="w-screen h-screen flex flex-col items-center overflow-y-scroll">
         <input
           type="text"

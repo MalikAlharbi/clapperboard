@@ -38,7 +38,7 @@ export default function Sidebar({ isLoggedIn }) {
   }, [authRef]);
 
   return (
-    <div className="text-white fixed left-0 flex  h-full">
+    <div className="text-white fixed left-0 flex  h-full z-30">
       <aside
         id="default-sidebar"
         className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 pt-10 pr-10"
@@ -47,7 +47,6 @@ export default function Sidebar({ isLoggedIn }) {
         <div className="h-full px-3 py-4 overflow-y-auto ">
           {isLoggedIn && <Profile />}
           {isAuthOpen && <Auth authRef={authRef} login={authWindow} />}
-
           <ul className="space-y-2 font-medium mt-5">
             <li>
               <Link

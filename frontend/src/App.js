@@ -1,6 +1,7 @@
 import { render } from "react-dom";
 import React, { useState, useEffect, createContext } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Sidebar from "./components/Sidebar";
 import HomePage from "./HomePage";
 import BrowsePage from "./BrowsePage";
 import UserShowsPage from "./UserShowsPage"
@@ -23,21 +24,24 @@ export default function App() {
 
   useEffect(() => {
     check_authentication();
-  }, [])
-  return (
+  }, []);
 
+  return (
     <BrowserRouter>
       {!isLoading && (
-        <AuthContext.Provider value={{ isLoggedIn }}>
-          <Routes>
-            <Route index element={<HomePage />} />
-            <Route path="browse" element={<BrowsePage />} />
-            <Route path="myshows" element={<UserShowsPage />} />
-          </Routes>
-        </AuthContext.Provider>
+        <>
+          <Sidebar isLoggedIn={isLoggedIn} />
+
+          <AuthContext.Provider value={{ isLoggedIn }}>
+            <Routes>
+              <Route index element={<HomePage />} />
+              <Route path="browse" element={<BrowsePage />} />
+              <Route path="myshows" element={<UserShowsPage />} />
+            </Routes>
+          </AuthContext.Provider>
+        </>
       )
       }
-
     </BrowserRouter>
   );
 }

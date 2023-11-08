@@ -33,10 +33,8 @@ export default function UserShowsPage() {
 
   return (
     <div className="flex flex-col h-screen">
-      <Sidebar isLoggedIn={isLoggedIn} />
       {!isLoading && (
         <>
-          {/* handle if logged in logic */}
           {!isLoggedIn ? (
             <Auth />
           ) : (

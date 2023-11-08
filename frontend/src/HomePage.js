@@ -1,6 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "./App";
-import Sidebar from "./components/Sidebar";
 import ShowsCarousel from "./components/ShowsCarousel";
 import { latestEpisodes, topShows } from "./ApiRequest";
 import { fetchInfo } from "./ShowsFetch";
@@ -40,9 +39,6 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col h-screen">
-      <div className="z-10">
-        <Sidebar isLoggedIn={isLoggedIn} />
-      </div>
       <div className="w-screen h-screen flex flex-col items-center overflow-y-scroll">
         <div className="text-red-500 text-3xl animate-pulse">HomePage</div>
 
