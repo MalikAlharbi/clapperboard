@@ -11,37 +11,30 @@ export default function InfoPopup({
   year,
 }) {
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 z-50 flex justify-center items-center pl-10 pr-10">
+    <div className="fixed top-0 left-0 right-0 bottom-0 z-50 flex justify-center items-center pl-10 pr-10 overflow-y-auto">
       <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-900 opacity-50"></div>
 
       <div
-        className="bg-gray-700 rounded-lg z-10 max-w-4xl right-0 flex relative "
+        className="bg-gray-700 rounded-lg z-10 max-w-4xl right-0 flex flex-col-reverse md:flex-row relative overflow-hidden"
         ref={popUpRef}
       >
-        <div class="absolute top-0 right-0">
-          {/* close window */}
-          <button
-            className="w-6 h-6 text-white hover:text-red-400 focus:outline-none mt-2 mr-5"
-            onClick={() => setIsOpen(false)}
-          >
-            <svg viewBox="0 0 20 20" fill="currentColor">
-              <path
-                fillRule="evenodd"
-                d="M11.414 10l4.293-4.293a1 1 0 00-1.414-1.414L10 8.586 5.707 4.293a1 1 0 00-1.414 1.414L8.586 10l-4.293 4.293a1 1 0 001.414 1.414L10 11.414l4.293 4.293a1 1 0 001.414-1.414L11.414 10z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
-        </div>
-        <div className="flex-shrink-0">
-          <img
-            className="h-full w-40  object-cover rounded-t-lg"
-            alt={`${name}`}
-            src={`${img}`}
-          />
-        </div>
-        <div className="px-6 py-4">
-          <div className="flex items-center mb-4 ">
+        <div className="px-6 py-4 overflow-hidden">
+          <div className="flex items-center mb-4">
+            <div className="relative top-0 left-0">
+              {/* close window */}
+              <button
+                className="w-6 h-6 text-white hover:text-red-400 focus:outline-none mt-2 mr-5"
+                onClick={() => setIsOpen(false)}
+              >
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path
+                    fillRule="evenodd"
+                    d="M11.414 10l4.293-4.293a1 1 0 00-1.414-1.414L10 8.586 5.707 4.293a1 1 0 00-1.414 1.414L8.586 10l-4.293 4.293a1 1 0 001.414 1.414L10 11.414l4.293 4.293a1 1 0 001.414-1.414L11.414 10z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
             <h2 className="text-white text-lg font-bold">{name}</h2>
           </div>
 
@@ -52,10 +45,9 @@ export default function InfoPopup({
             ) : (
               <div className="text-white">
                 {/* info fields */}
-
                 <>
                   {info && (
-                    <>
+                    <div className="scrollable-content">
                       {info.summary && (
                         <p>
                           <span className="text-red-500 font-bold">
@@ -74,7 +66,7 @@ export default function InfoPopup({
                       )}
                       {info.runtime && (
                         <p className="">
-                          <span className="text-red-600">Eposide Time:</span>{" "}
+                          <span className="text-red-600">Episode Time:</span>{" "}
                           <span className="text-blue-500">
                             {info.runtime} Minutes
                           </span>
@@ -129,13 +121,21 @@ export default function InfoPopup({
                           </span>
                         </p>
                       )}
-                    </>
-                  )}{" "}
+                    </div>
+                  )}
                 </>
               </div>
             )}
           </div>
         </div>
+        <div className="flex-shrink-0">
+          <img
+            className="h-full w-full md:w-40 object-cover rounded-t-lg md:rounded-none"
+            alt={`${name}`}
+            src={`${img}`}
+          />
+        </div>
+
       </div>
     </div>
   );
