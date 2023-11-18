@@ -15,9 +15,9 @@ export default function Auth(props) {
     event.preventDefault();
     try {
       const response = await signIn(username, password, rememberMe);
-      console.log(rememberMe)
+      console.log(rememberMe);
       if (response.success) {
-        location.reload();
+        location.replace("/");
       } else {
         setError("Invalid username or password");
       }
@@ -86,7 +86,8 @@ export default function Auth(props) {
             Username
           </label>
           <br />
-          <input required
+          <input
+            required
             type="text"
             id="username"
             name="username"
@@ -102,7 +103,8 @@ export default function Auth(props) {
                 Email
               </label>
               <br />
-              <input required
+              <input
+                required
                 type="email"
                 id="email"
                 name="email"
@@ -119,7 +121,8 @@ export default function Auth(props) {
             Password
           </label>
           <br />
-          <input required
+          <input
+            required
             type="password"
             id="password"
             name="password"
@@ -131,10 +134,19 @@ export default function Auth(props) {
           <br />
 
           <div class="inline items-center">
-            <input id="remember" type="checkbox" value="" class="w-4 h-4 border rounded dark:bg-gray-700 dark:border-gray-600" onClick={() => { setRememberMe(event.target.checked) }} />
-            <label for="remember" class="ml-2 text-sm font-medium text-white">Remember me</label>
+            <input
+              id="remember"
+              type="checkbox"
+              value=""
+              class="w-4 h-4 border rounded dark:bg-gray-700 dark:border-gray-600"
+              onClick={() => {
+                setRememberMe(event.target.checked);
+              }}
+            />
+            <label for="remember" class="ml-2 text-sm font-medium text-white">
+              Remember me
+            </label>
           </div>
-
 
           {login ? (
             // Render login form
