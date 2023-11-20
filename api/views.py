@@ -4,7 +4,7 @@ from django.db.models import Max, Subquery, OuterRef, Count
 from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from django.http import HttpResponseNotFound, JsonResponse
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from .serializers import UserShowSerializer, UserShowsSerializer, UserShowUpdateSerializer, TopShowsSerializer
 from .models import UserShow, Profile
 from rest_framework.decorators import api_view
-
+from django.contrib.sessions.models import Session
 class AllUsers(generics.ListAPIView):
     permission_classes = [IsAdminUser]
     queryset = UserShow.objects.all()
@@ -210,13 +210,20 @@ def upload_image(request):
 
 
 
-@api_view(['GET'])
-def getImg(request):
-    user_profile = Profile.objects.filter(user=request.user).first()
-    if user_profile is None:
-        return JsonResponse({"success": False, "error": "no img found"})
 
-    return JsonResponse({"success":True, "url":user_profile.profile_img.url})
+def getImg(request, username):
+    try:
+        user = User.objects.get(username=username)
+        try:
+            user_profile = Profile.objects.get(user=user)
+            if user_profile.profile_img:
+                return JsonResponse({"success": True, "url": user_profile.profile_img.url})
+            else:
+                return JsonResponse({"success": False, "error": "No image found for the user."})
+        except Profile.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Profile does not exist for the user."})
+    except User.DoesNotExist:
+        return JsonResponse({"success": False, "error": "User does not exist."})
 
 
 
@@ -224,4 +231,46 @@ def getImg(request):
 def getUsername(request):
     return JsonResponse({"success":True, "username":request.user.username})
 
+
+@api_view(['GET'])
+def getProfileData(request, username):
+    try:
+        user = User.objects.get(username=username)
+        date_joined = user.date_joined.strftime("%B %d, %Y")
+        total_shows = UserShow.objects.filter(user=user).values('showId').distinct().count()
+
+        # Check if the user has an active session
+        online = False
+        sessions = Session.objects.filter(expire_date__gte=timezone.now())
+        for session in sessions:
+            session_data = session.get_decoded()
+            if str(user.pk) in session_data.get('_auth_user_id', ''):
+                online = True
+                break
+
+        current_status = 'Online' if online else user.last_login.strftime("%T - %B %d, %Y")
+
+        return JsonResponse({
+            "success": True,
+            "date_joined": date_joined,
+            "total_shows": total_shows,
+            "current_status": current_status
+        })
+    except User.DoesNotExist:
+        return HttpResponseNotFound("<h1>Page not found</h1>")
+
+
     
+@api_view(['GET'])
+def getProfileShows(request, username):
+    user = User.objects.get(username=username)
+    showsJson = list(UserShow.objects.filter(user=user).values('showId').distinct())
+    return JsonResponse({"success":True,"showsJson":showsJson})
+
+
+
+@api_view(['GET'])
+def getProfileEpisodes(request,show_id,username):
+    user = User.objects.get(username=username)
+    queryset = list(UserShow.objects.filter(user=user, showId = show_id).values().order_by('season'))
+    return JsonResponse({"success":True,"showsJson":queryset})

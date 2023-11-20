@@ -1,5 +1,5 @@
-from django.urls import include, path
-from .views import AllUsers, UserShowUpdate, UserShows, TopShows , UserEpisodes, LatestWatchedEpisodes, signIn, signUp, is_authenticated, signOut, upload_image, getImg, getUsername
+from django.urls import path
+from .views import *
 urlpatterns = [
     path('allusers', AllUsers.as_view()),
     path('user-shows/',UserShows.as_view()),
@@ -12,7 +12,10 @@ urlpatterns = [
     path('is-authenticated', is_authenticated, name='is_authenticated'),
     path('signout', signOut, name='signout'),
     path('upload',upload_image,name='upload'),
-    path('getImg',getImg, name='getImg'),
-    path('getUsername', getUsername, name='getUsername')
-    
+    path('getImg/<username>/',getImg, name='getImg'),
+    path('getUsername', getUsername, name='getUsername'),
+    path('getProfileData/<username>/', getProfileData, name='getProfileData'),
+    path('getProfileShows/<username>/', getProfileShows, name='getProfileShows'),
+    path('getProfileEpisodes/show_id=<int:show_id>/username=<str:username>/', getProfileEpisodes, name='getProfileEpisodes'),
+
 ]

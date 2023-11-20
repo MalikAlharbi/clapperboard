@@ -5,9 +5,16 @@ import AddToMyList from "./AddToMyList";
 import Auth from "./Auth";
 import Loading from "./Loading";
 import InfoPopup from "./InfoPopUp";
-import { getSavedEpisodes } from "../ApiRequest";
+import { getProfiSavedEpisodes, getSavedEpisodes } from "../ApiRequest";
 
-export default function ShowsCard({ showId, name, img, year, isLoggedIn }) {
+export default function ShowsCard({
+  showId,
+  name,
+  img,
+  year,
+  isLoggedIn,
+  username,
+}) {
   const [isPopOpen, setIsPopOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [isWatching, setIsWatching] = useState(false);
@@ -31,7 +38,10 @@ export default function ShowsCard({ showId, name, img, year, isLoggedIn }) {
 
   async function getEpisodes() {
     const seasons = await fetchSeasons(showId);
-    const data = await getSavedEpisodes(showId);
+    let data = "";
+    if (username) data = await getProfiSavedEpisodes(showId, username);
+    else data = await getSavedEpisodes(showId);
+
     let flag = false;
     if (seasons[0]?.number != 1) flag = true;
 

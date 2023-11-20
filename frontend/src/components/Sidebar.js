@@ -4,18 +4,19 @@ import { AiOutlineHome, AiOutlineSearch, AiOutlineUser } from "react-icons/ai";
 import { BiLogIn, BiLogOut } from "react-icons/bi";
 import { BsFillEnvelopePaperHeartFill } from "react-icons/bs";
 import { SlScreenDesktop } from "react-icons/sl";
+import { FaUserFriends } from "react-icons/fa";
 import { signOut } from "../ApiRequest";
 import Auth from "./Auth";
-import Profile from "./Profile";
+import SidebarProfile from "./SidebarProfile";
 
-export default function Sidebar({ isLoggedIn }) {
+export default function Sidebar({ isLoggedIn, username }) {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authWindow, setAuthWindow] = useState(true);
   const authRef = useRef(null);
 
   async function signOutHandler() {
     let signedOut = await signOut();
-    if (signedOut) location.replace('/');
+    if (signedOut) location.replace("/");
   }
 
   function handleSignIn() {
@@ -45,7 +46,7 @@ export default function Sidebar({ isLoggedIn }) {
         aria-label="Sidebar"
       >
         <div className="h-full px-3 py-4 overflow-y-auto ">
-          {isLoggedIn && <Profile />}
+          {isLoggedIn && <SidebarProfile username={username} />}
           {isAuthOpen && <Auth authRef={authRef} login={authWindow} />}
           <ul className="space-y-2 font-medium mt-5">
             <li>
@@ -84,6 +85,31 @@ export default function Sidebar({ isLoggedIn }) {
                     </span>
                   </Link>
                 </li>
+
+                <li className="border-t border-gray-600 pt-2">
+                  <a
+                    href={`/profile/${username}`}
+                    className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-red-700 dark:hover:bg-red-700 group"
+                  >
+                    <AiOutlineUser size={20} />
+                    <span className="flex-1 ml-3 whitespace-nowrap">
+                      My Account
+                    </span>
+                  </a>
+                </li>
+
+                <li className="border-t border-gray-600 pt-2">
+                  <Link
+                    to="/friends"
+                    className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-red-700 dark:hover:bg-red-700 group"
+                  >
+                    <FaUserFriends size={20} />
+                    <span className="flex-1 ml-3 whitespace-nowrap">
+                      Friends
+                    </span>
+                  </Link>
+                </li>
+
                 <li
                   className="border-t border-gray-600 pt-2"
                   onClick={signOutHandler}

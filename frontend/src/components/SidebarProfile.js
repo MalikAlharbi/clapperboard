@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
-import { uploadImage, getUsername, getImg } from "../ApiRequest";
+import { uploadImage, getImg } from "../ApiRequest";
 
-export default function Profile() {
+export default function SidebarProfile({ username }) {
   const fileInputRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState([false, ""]);
-  const [username, setUsername] = useState("");
   const [image, setImage] = useState(null);
   const handleImageUpload = () => {
     fileInputRef.current.click();
@@ -22,9 +21,7 @@ export default function Profile() {
   };
 
   const retriveProfile = async () => {
-    let username = await getUsername();
-    setUsername(username);
-    let dbImg = await getImg();
+    let dbImg = await getImg(username);
     if (dbImg) setImage(dbImg);
     setLoading(false);
   };
@@ -79,9 +76,7 @@ export default function Profile() {
             />
           )}
 
-          <b className=" text-red-700 font-mono relative left-5">
-            {username}
-          </b>
+          <b className=" text-red-700 font-mono relative left-5">{username}</b>
         </>
       )}
     </>

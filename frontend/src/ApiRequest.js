@@ -172,9 +172,9 @@ export const uploadImage = async (formData) => {
   return data;
 };
 
-export const getImg = async () => {
+export const getImg = async (username) => {
   const csrftoken = getCookie("csrftoken");
-  const response = await fetch(`/api/getImg`, {
+  const response = await fetch(`/api/getImg/${username}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -198,6 +198,50 @@ export const getUsername = async () => {
   return data.username;
 };
 
+export const getProfileData = async (username) => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/getProfileData/${username}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  });
+  const data = await response.json();
+  console.log(data);
+  return data;
+};
+
+export const getProfileShows = async (username) => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/getProfileShows/${username}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  });
+  const data = await response.json();
+  console.log(data);
+  return data.showsJson;
+};
+
+export const getProfiSavedEpisodes = async (show_id, username) => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(
+    `/api/getProfileEpisodes/show_id=${show_id}/username=${username}/`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
+    }
+  );
+  const data = await response.json();
+  return data.showsJson;
+};
+
 export default [
   signIn,
   signUp,
@@ -210,4 +254,7 @@ export default [
   uploadImage,
   getImg,
   getUsername,
+  getProfileData,
+  getProfileShows,
+  getProfiSavedEpisodes,
 ];
