@@ -8,6 +8,7 @@ import {
 } from "./ApiRequest";
 import { fetchInfo } from "./ShowsFetch";
 import ItemList from "./components/ItemList";
+import Loading from "./components/Loading";
 import { AuthContext } from "./App";
 
 export default function ProfilePage() {
@@ -58,7 +59,6 @@ export default function ProfilePage() {
       setCurrentStatus(profileData.current_status);
       let dbImg = await getImg(username);
       if (dbImg) setImage(dbImg);
-      setLoading(false);
     } catch (error) {
       setNotFoundError({ error: true, msg: "User not found (404)" });
     }
@@ -96,7 +96,7 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {!loading && !notFoundError.error && (
+      {!loading && !notFoundError.error ? (
         <div className="flex flex-col items-center mt-10">
           <div className="flex flex-row mb-10">
             <>
@@ -157,6 +157,10 @@ export default function ProfilePage() {
             isLoggedIn={isLoggedIn}
             username={username}
           />
+        </div>
+      ) : (
+        <div className="flex justify-center items-center h-screen">
+          <Loading size={16} />
         </div>
       )}
     </>
