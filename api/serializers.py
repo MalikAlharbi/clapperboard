@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import UserShow
+from .models import UserShow,  FriendRequest, Friendship
 
 
 class UserShowSerializer(serializers.ModelSerializer):
@@ -26,3 +26,15 @@ class TopShowsSerializer(serializers.ModelSerializer):
         model = UserShow
         fields = ('showId','showCount')
         
+
+class FriendshipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Friendship
+        fields = ['user_1', 'user_2']
+
+
+class FriendRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendRequest
+        fields = ['from_user', 'to_user']
+

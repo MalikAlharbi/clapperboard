@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.contrib.postgres.fields import JSONField
 
 
@@ -16,3 +16,21 @@ class UserShow(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_img = models.ImageField(upload_to='users/profile_images/%Y/%m/%d',blank=True)
+
+
+
+class Friendship(models.Model):
+    created = models.DateTimeField(auto_now_add=True, editable=False)
+    user_1 = models.ForeignKey(User, related_name="user_1_friendship", on_delete=models.CASCADE, default='')
+    user_2 = models.ForeignKey(User, related_name="user_2_friendship", on_delete=models.CASCADE, default='')
+    class Meta:
+        unique_together = ('user_1', 'user_2')
+
+    
+
+
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(User, related_name="Request_from_user", on_delete=models.CASCADE)
+    to_user = models.ForeignKey(User, related_name="Request_to_user", on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ('from_user', 'to_user')
