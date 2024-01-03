@@ -198,6 +198,19 @@ export const getUsername = async () => {
   return data.username;
 };
 
+export const getUsernameById = async (userid) => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/getUsernameById/${userid}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  });
+  const data = await response.json();
+  return data.username;
+};
+
 export const getProfileData = async (username) => {
   const csrftoken = getCookie("csrftoken");
   const response = await fetch(`/api/getProfileData/${username}`, {
@@ -208,7 +221,6 @@ export const getProfileData = async (username) => {
     },
   });
   const data = await response.json();
-  console.log(data);
   return data;
 };
 
@@ -222,7 +234,6 @@ export const getProfileShows = async (username) => {
     },
   });
   const data = await response.json();
-  console.log(data);
   return data.showsJson;
 };
 
@@ -242,6 +253,115 @@ export const getProfiSavedEpisodes = async (show_id, username) => {
   return data.showsJson;
 };
 
+//Friends
+
+export const showFriends = async () => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/showFriends`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  });
+  const data = await response.json();
+  return data.friends;
+};
+
+export const friendshipStatus = async (user_id) => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/friendshipStatus/${user_id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  });
+  const data = await response.json();
+  return data.friendshipStatus;
+};
+
+export const showFriendReq = async () => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/showFriendReq`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  });
+  const data = await response.json();
+  return data;
+};
+
+export const sendFriendRequest = async (username) => {
+  if (!username) throw new Error("Missing username");
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch("/api/sendFriendRequest", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+    body: JSON.stringify({
+      username: username,
+    }),
+  });
+  const data = await response.json();
+  return data;
+};
+
+export const friendReqDecision = async (username, decision) => {
+  if (!username || decision === null)
+    throw new Error("Missing username/decision");
+
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch("/api/friendReqDecision", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+    body: JSON.stringify({
+      username: username,
+      decision: decision,
+    }),
+  });
+  const data = await response.json();
+  return data;
+};
+
+export const deleteFriend = async (username) => {
+  if (!username) throw new Error("Missing username");
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch("/api/deleteFriend", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+    body: JSON.stringify({
+      username: username,
+    }),
+  });
+  const data = await response.json();
+  return data;
+};
+
+export const searchForUser = async (username) => {
+  if (!username) throw new Error("Missing username");
+
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/searchForUser/${username}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  });
+  const data = await response.json();
+  return data;
+};
 export default [
   signIn,
   signUp,
@@ -257,4 +377,5 @@ export default [
   getProfileData,
   getProfileShows,
   getProfiSavedEpisodes,
+  searchForUser,
 ];

@@ -2,17 +2,24 @@ import json
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Max, Subquery, OuterRef, Count
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
 from django.http import HttpResponseNotFound, JsonResponse
+from django.db.models.functions import Length
+from django.contrib.sessions.models import Session
+from django.contrib.auth.password_validation import CommonPasswordValidator
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from .serializers import UserShowSerializer, UserShowsSerializer, UserShowUpdateSerializer, TopShowsSerializer
-from .models import UserShow, Profile
 from rest_framework.decorators import api_view
-from django.contrib.sessions.models import Session
+
+from .serializers import *
+from .models import *
+
 class AllUsers(generics.ListAPIView):
     permission_classes = [IsAdminUser]
     queryset = UserShow.objects.all()
@@ -141,22 +148,48 @@ def signUp(request):
         data = json.loads(request.body)
         username = data["username"]
         password = data["password"]
+        min_length = 7
+
         email = data["email"]
         rememberMe = data["rememberMe"]
-        invalid_username = User.objects.filter(username=username).exists()
-        invalid_email = User.objects.filter(email=email).exists()
+        username_exists = User.objects.filter(username=username).exists()
+        email_exists = User.objects.filter(email=email).exists()
 
         if not (username and password and email):
             return JsonResponse({'success': False, 'error': 'Missing parameters'})
 
-        if (invalid_username and invalid_email):
+        if (username_exists and email_exists):
             return JsonResponse({"success": False, 'error': 'Username and email already exists'})
 
-        if invalid_username:
+        if username_exists:
             return JsonResponse({"success": False, 'error': 'Username already exists'})
 
-        if invalid_email:
+        if email_exists:
             return JsonResponse({"success": False, 'error': 'Email already exists'})
+
+        try:
+            validate_email(email)
+        except ValidationError as validation_error:
+            return JsonResponse({'success': False, 'error': validation_error.message})
+
+        #password checking
+        validator = CommonPasswordValidator()
+        try:
+            validator.validate(password=password)
+        except ValidationError as validation_error:
+            return JsonResponse({'success': False, 'error': validation_error.message})
+
+
+        if len(password) < min_length:
+            return JsonResponse({'success': False, 'error': 'Password length must be at least 7'})
+
+        # check for digit
+        if not any(char.isdigit() for char in password):
+            return JsonResponse({'success': False, 'error': 'Password must contain at least one digit'})
+
+        # check for letter
+        if not any(char.isalpha() for char in password):
+            return JsonResponse({'success': False, 'error': 'Password must contain at least one letter'})
 
         user = User.objects.create_user(
             username=username, email=email, password=password)
@@ -231,6 +264,10 @@ def getImg(request, username):
 def getUsername(request):
     return JsonResponse({"success":True, "username":request.user.username})
 
+@api_view(['GET'])
+def getUsernameById(request,userid):
+    user = User.objects.get(id=userid)
+    return JsonResponse({"success":True, "username":user.username})
 
 @api_view(['GET'])
 def getProfileData(request, username):
@@ -274,3 +311,92 @@ def getProfileEpisodes(request,show_id,username):
     user = User.objects.get(username=username)
     queryset = list(UserShow.objects.filter(user=user, showId = show_id).values().order_by('season'))
     return JsonResponse({"success":True,"showsJson":queryset})
+
+
+#Friends
+
+@api_view(['GET'])
+def showFriends(request):
+    friends = Friendship.objects.filter(user_1=request.user)
+    serializer = FriendshipSerializer(friends, many=True)
+    return JsonResponse({"success": True, "friends": serializer.data})
+
+def friendshipStatus(request, user):
+    isSenderPending = FriendRequest.objects.filter(from_user=request.user, to_user=user).exists()
+    isReceiverPending = FriendRequest.objects.filter(from_user=user, to_user=request.user).exists()
+    isUserAfriend = Friendship.objects.filter(user_1=request.user, user_2=user).exists()
+
+    if isSenderPending:
+     return JsonResponse({"success": True, "friendshipStatus": 'Pending_sender'})
+
+    if isReceiverPending:
+     return JsonResponse({"success": True, "friendshipStatus": 'Pending_receiver'})
+
+    if isUserAfriend:
+        return JsonResponse({"success": True, "friendshipStatus": 'Friend'})
+     
+
+    return JsonResponse({"success": True, "friendshipStatus": 'Not a friend'})
+
+
+def sendFriendReq(request):
+    data = json.loads(request.body)
+    username = data["username"]
+    to_user = User.objects.get(username=username)
+    if Friendship.objects.filter(user_1=request.user, user_2=to_user).exists():
+        return JsonResponse({"success": False, "message": "Already friends"})
+    if FriendRequest.objects.filter(from_user = to_user, to_user = request.user):
+        return JsonResponse({"success": False, "message": "Friend request already sent from the other user"})
+    if(request.user.username == username):
+        return JsonResponse({"success": False, "message": "Error"})
+
+    friendReq, created = FriendRequest.objects.get_or_create(from_user=request.user, to_user=to_user)
+    if not created:
+        return JsonResponse({"success": False, "message": "Friend Request already sent"})
+
+    return JsonResponse({"success": True, "message": "Friend request sent"})
+
+@api_view(['GET'])
+def showFriendReq(request):
+    friendReq = FriendRequest.objects.filter(to_user=request.user)
+    serializer = FriendRequestSerializer(friendReq, many=True)
+    return JsonResponse({"success": True, "friendReq": serializer.data})
+
+def friendReqDecision(request):
+    data = json.loads(request.body)
+    username = data["username"]
+    decision = data["decision"]
+    from_user = User.objects.get(username=username)
+    friendReq = FriendRequest.objects.get(from_user=from_user, to_user=request.user)
+    if not decision:
+        friendReq.delete()
+        return JsonResponse({"success": True, "decision":"decline"})
+    
+    obj1, created1 = Friendship.objects.get_or_create(user_1=request.user, user_2= from_user)
+    obj2, created2 = Friendship.objects.get_or_create(user_1=from_user, user_2= request.user)
+    friendReq.delete()
+    return JsonResponse({"success": True, "decision": "accepet"})
+
+def deleteFriend(request):
+#    Friendship.objects.get(user=request.user, friend= username).delete()
+    data = json.loads(request.body)
+    username = data["username"]
+    user_id = User.objects.get(username=username)
+    get_object_or_404(Friendship, user_1=request.user, user_2= user_id).delete()
+    get_object_or_404(Friendship, user_1=user_id, user_2= request.user).delete()
+    return JsonResponse({"success": True, "message": "Friend Deleted"})
+        
+
+
+
+def searchForUser(request, username):
+    if not username:
+        return JsonResponse({"success": False, "message": "No username provided"})
+    searchResult = User.objects.filter(username__icontains=username).exclude(username=request.user).order_by(Length('username').asc())
+    if not searchResult:
+        return JsonResponse({"success": False, "message": "No matching users found"})
+
+    searchList = list(searchResult.values_list('id', flat=True))
+    return  JsonResponse({"success":True,'user_ids': searchList})
+
+    
