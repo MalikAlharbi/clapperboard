@@ -9,6 +9,7 @@ urlpatterns = [
     path('latest-episodes', LatestWatchedEpisodes.as_view()),
     path('signin', signIn, name='signin'),
     path('signup', signUp, name='signup'),
+    path('verify-email/<str:uidb64>/<str:token>/', verify_email, name='verify_email'),
     path('is-authenticated', is_authenticated, name='is_authenticated'),
     path('signout', signOut, name='signout'),
     path('upload',upload_image,name='upload'),
@@ -24,7 +25,6 @@ urlpatterns = [
     path('showFriendReq', showFriendReq, name='showFriendReq'),
     path('friendReqDecision', friendReqDecision, name='friendReqDecision'),
     path('deleteFriend', deleteFriend, name='deleteFriend'),
-     path('searchForUser/<str:username>', searchForUser, name='searchForUser'),
-
+    path('searchForUser/<str:username>', searchForUser, name='searchForUser'),
 
 ]

@@ -1,24 +1,50 @@
 import json
 from django.contrib.auth import authenticate, login, logout
-from django.db.models import Max, Subquery, OuterRef, Count
-from django.utils import timezone
-from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import ensure_csrf_cookie
 from django.contrib.auth.models import User
-from django.http import HttpResponseNotFound, JsonResponse
-from django.db.models.functions import Length
-from django.contrib.sessions.models import Session
 from django.contrib.auth.password_validation import CommonPasswordValidator
-from django.core.validators import validate_email
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sessions.models import Session
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.core.validators import validate_email
+from django.db.models import Max, Subquery, OuterRef, Count
+from django.db.models.functions import Length
+from django.http import HttpResponseNotFound, JsonResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import generics, status
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.decorators import api_view
-
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import User, Profile
 from .serializers import *
-from .models import *
+
+# Authentication and User-related functions
+from django.contrib.auth import authenticate, login, logout
+from django.urls import reverse
+from django.http import JsonResponse
+from django.contrib import messages
+
+# User registration and email verification
+from .models import User, Profile
+from django.contrib.sites.shortcuts import get_current_site
+from django.urls import reverse
+from django.conf import settings
+from django.http import JsonResponse
+from django.contrib import messages
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.urls import reverse
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from django.conf import settings
+from django.http import JsonResponse
+from django.contrib import messages
 
 class AllUsers(generics.ListAPIView):
     permission_classes = [IsAdminUser]
@@ -142,6 +168,44 @@ def signIn(request):
         return JsonResponse({'success': False})
 
 
+
+
+def send_activation_email(request, user):
+    try:
+        current_site = get_current_site(request)
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        token = default_token_generator.make_token(user)
+        activation_url = reverse('verify_email', kwargs={'uidb64': uidb64, 'token': token})
+        activation_url = f'{request.scheme}://{current_site.domain}{activation_url}'
+
+        email_subject = 'Activate your account!'
+        email_body = f'Hi {user.username},\n\nPlease click the following link to activate your account:\n\n{activation_url}'
+        send_mail(email_subject, email_body, settings.EMAIL_HOST_USER, [user.email])
+        return JsonResponse({"success":True,'message': 'Activation email sent.'})
+    except Exception as e:
+         return JsonResponse({"success":False,'message': e})
+
+   
+    
+
+
+def verify_email(request, uidb64, token):
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request,user)
+         #redirect to activation success page
+        return redirect("http://127.0.0.1:8000/activation")
+    #redirect to 404 page
+    return redirect("http://127.0.0.1:8000/404")
+
+
 @ensure_csrf_cookie
 def signUp(request):
     if request.method == 'POST':
@@ -151,7 +215,6 @@ def signUp(request):
         min_length = 7
 
         email = data["email"]
-        rememberMe = data["rememberMe"]
         username_exists = User.objects.filter(username=username).exists()
         email_exists = User.objects.filter(email=email).exists()
 
@@ -159,7 +222,7 @@ def signUp(request):
             return JsonResponse({'success': False, 'error': 'Missing parameters'})
 
         if (username_exists and email_exists):
-            return JsonResponse({"success": False, 'error': 'Username and email already exists'})
+            return JsonResponse({"success": False, 'error': 'Username and email already exist'})
 
         if username_exists:
             return JsonResponse({"success": False, 'error': 'Username already exists'})
@@ -172,34 +235,36 @@ def signUp(request):
         except ValidationError as validation_error:
             return JsonResponse({'success': False, 'error': validation_error.message})
 
-        #password checking
+        # Password checking
         validator = CommonPasswordValidator()
         try:
             validator.validate(password=password)
         except ValidationError as validation_error:
             return JsonResponse({'success': False, 'error': validation_error.message})
 
-
         if len(password) < min_length:
             return JsonResponse({'success': False, 'error': 'Password length must be at least 7'})
 
-        # check for digit
+        # Check for digit
         if not any(char.isdigit() for char in password):
             return JsonResponse({'success': False, 'error': 'Password must contain at least one digit'})
 
-        # check for letter
+        # Check for letter
         if not any(char.isalpha() for char in password):
             return JsonResponse({'success': False, 'error': 'Password must contain at least one letter'})
 
         user = User.objects.create_user(
             username=username, email=email, password=password)
+
         if user is not None:
-            login(request, user)
-            if not rememberMe:
-                request.session.set_expiry(0)
-            return JsonResponse({'success': True})
+            user.is_active = False
+            user.save()
+            send_activation_email(request,user)
+            return JsonResponse({'success': True, 'verification_url': 'verification_url have been sent'})
 
         return JsonResponse({'success': False})
+
+
 
 
 @ensure_csrf_cookie
