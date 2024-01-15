@@ -285,7 +285,7 @@ def getProfileData(request, username):
                 online = True
                 break
 
-        current_status = 'Online' if online else user.last_login.strftime("%T - %B %d, %Y")
+        current_status = 'Online' if online else user.last_login.strftime("%T - %B %d, %Y") if (user.last_login and online is False) else ''
 
         return JsonResponse({
             "success": True,
@@ -294,8 +294,9 @@ def getProfileData(request, username):
             "current_status": current_status
         })
     except User.DoesNotExist:
-        return HttpResponseNotFound("<h1>Page not found</h1>")
-
+        return JsonResponse({"success": False, "error": "User not found"})
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)})
 
     
 @api_view(['GET'])
