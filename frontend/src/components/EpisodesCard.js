@@ -10,6 +10,7 @@ export default function EpisodesCard({
   seasons,
 }) {
   const [savedEpisodes, setSavedEpisodes] = useState(tracker);
+  const [isMounted, setIsMounted] = useState(false);
   const [dbIndex, setDbIndex] = useState(-1);
 
   const setTotal = async () => {
@@ -22,26 +23,25 @@ export default function EpisodesCard({
   };
 
   useEffect(() => {
-    setTotal();
-  }, [savedEpisodes]);
-
-  useEffect(() => {
-    setTotal();
-  }, []);
-
-  useEffect(() => {
-    if (savedEpisodes)
-      postSavedEpisodes(
-        showId,
-        savedEpisodes[seasonCurrentIndex],
-        seasonCurrentIndex,
-        dbIndex
-      );
+    if (isMounted) {
+      setTotal();
+      if (savedEpisodes)
+        postSavedEpisodes(
+          showId,
+          savedEpisodes[seasonCurrentIndex],
+          seasonCurrentIndex,
+          dbIndex
+        );
+    }
   }, [savedEpisodes]);
 
   useEffect(() => {
     if (clickerReset != null) handleAllSave();
   }, [clickerReset]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   function handleUnknownSeasons(episode) {
     const seasonIndex = seasons.findIndex(function (item) {
