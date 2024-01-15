@@ -111,27 +111,24 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
 
   async function handleRester(index) {
     if (clickerReset === null) setClickerReset(true);
-    else
-      setClickerReset((prevState) => !prevState);
+    else setClickerReset((prevState) => !prevState);
 
     setCurrentIndex(index);
     setIsClicked(true);
-
   }
 
-
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 z-50  justify-center items-center pl-10 pr-10 max-h-2xl h-screen w-screen grid place-items-center overflow-y-scroll">
+    <div className="fixed top-0 left-0 right-0 bottom-0 z-50 justify-center items-center pl-10 pr-10 max-h-2xl h-screen w-screen grid place-items-center overflow-y-scroll">
       <div className="absolute top-0 left-0 right-0 bottom-0 bg-gray-900 opacity-20"></div>
 
       <div
-        className="bg-black border border-red-600 rounded-lg z-10  w-[950px] h-[800px] right-0 flex relative"
+        className="bg-black border border-red-600 rounded-lg z-10  right-0 flex relative"
         ref={popUpRef}
       >
-        <div className="absolute top-0 right-0 ">
+        <div className="absolute top-0 right-0">
           {/* close window */}
           <button
-            className="w-6 h-6 text-white hover:text-red-400 focus:outline-none "
+            className="w-6 h-6 text-white hover:text-red-400 focus:outline-none"
             onClick={() => setIsOpen(false)}
           >
             <svg viewBox="0 0 20 20" fill="currentColor">
@@ -144,8 +141,8 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
           </button>
         </div>
 
-        <div className="px-6 py-4 ">
-          <div className=" relative items-center mb-4 ">
+        <div className="px-6 py-4">
+          <div className="relative items-center mb-4">
             <h2 className="text-white text-xl font-bold top-0 bottom-0 right-0 left-0">
               Tell us where you <span className="text-red-500">stopped</span>
             </h2>
@@ -156,36 +153,34 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
           {loading ? (
             <Loading />
           ) : (
-
-            <div className="flex">
+            <div className="flex flex-col sm:flex-row">
               {/* seasons buttons */}
-
-              <div className="w-[250px] max-h-[650px] overflow-y-auto scroll-smooth col-span-1">
+              <div className="w-full sm:w-[250px] max-h-[650px] overflow-y-auto scroll-smooth">
                 {seasons.map((season, index) => (
                   <div key={season.id} className="flex flex-row left-0 mb-2">
                     <div className="inline-block">
                       <button
-                        className={`${totalSavedEpisodes[index]
-                          ? "bg-blue-600"
-                          : "bg-gray-600 hover:bg-blue-600"
-                          } rounded-full w-4 h-4 items-center mr-4`}
+                        className={`${
+                          totalSavedEpisodes[index]
+                            ? "bg-blue-600"
+                            : "bg-gray-600 hover:bg-blue-600"
+                        } rounded-full w-4 h-4 items-center mr-4`}
                         onClick={() => {
-                          handleRester(index)
+                          handleRester(index);
                         }}
                       />
 
                       <button
-                        className={`${clickedSeasons[index]
-                          ? "text-red-500"
-                          : totalSavedEpisodes[index] === season.episodeOrder
+                        className={`${
+                          clickedSeasons[index]
+                            ? "text-red-500"
+                            : totalSavedEpisodes[index] === season.episodeOrder
                             ? "text-green-500"
-                            : " hover:text-red-500 text-gray-300"
-                          } rounded-full py-2 px-4 font-bold mr-2 mb-2`}
+                            : "hover:text-red-500 text-gray-300"
+                        } rounded-full py-2 px-4 font-bold mr-2 mb-2`}
                         onClick={() => handleButton(index)}
                       >
-
-
-                        <span className=" text-lg">
+                        <span className="text-lg">
                           Season {season.number} (
                           {totalSavedEpisodes[index] || 0}/
                           {season.episodeOrder
@@ -195,14 +190,12 @@ export default function AddToMyList({ showId, popUpRef, setIsOpen }) {
                         </span>
                       </button>
                     </div>
-
                   </div>
                 ))}
               </div>
 
-
               {/* episodes cards */}
-              <div className=" flex flex-col items-start float-right">
+              <div className="flex flex-col items-start float-right">
                 {isClicked && (
                   <EpisodesCard
                     showId={showId}

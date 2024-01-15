@@ -12,11 +12,11 @@ export default function EpisodesCard({
   const [savedEpisodes, setSavedEpisodes] = useState(tracker);
   const [dbIndex, setDbIndex] = useState(-1);
 
-
   const setTotal = async () => {
     setTotalSavedEpisodes((prevState) => {
       const newState = [...prevState];
-      newState[seasonCurrentIndex] = savedEpisodes[seasonCurrentIndex]?.filter(Boolean).length;
+      newState[seasonCurrentIndex] =
+        savedEpisodes[seasonCurrentIndex]?.filter(Boolean).length;
       return newState;
     });
   };
@@ -116,40 +116,40 @@ export default function EpisodesCard({
   }
 
   return (
-    <div
-      className="max-w-[660px]  max-h-[650px] overflow-y-auto scroll-smooth"
-    >
+    <div className="max-w-[660px] max-h-[350px] md:max-h-[650px] overflow-y-auto scroll-smooth mx-auto">
       {episodes?.map((episode, index) => (
         <div key={episode.id} className="m-4">
-          <div className=" rounded-lg shadow-md overflow-hidden">
-            <div className=" p-2 flex justify-between">
+          <div className="rounded-lg shadow-md overflow-hidden">
+            <div className="p-2 flex flex-col sm:flex-row justify-between">
               <h2 className="text-l font-semibold text-white">
                 {/* circle for episodes */}
                 {seasons[0].number > 0 ? (
                   <button
-                    className={`${savedEpisodes[handleUnknownSeasons(episode)][index]
-                      ? "bg-green-500"
-                      : "bg-gray-600 hover:bg-red-600"
-                      } rounded-full w-5 h-5 mr-2 mb-2`}
+                    className={`${
+                      savedEpisodes[handleUnknownSeasons(episode)][index]
+                        ? "bg-green-500"
+                        : "bg-gray-600 hover:bg-red-600"
+                    } rounded-full w-5 h-5 mr-2 mb-2`}
                     onClick={() => handleUnknownSave(index, episode)}
                   />
                 ) : (
                   <button
-                    className={`${savedEpisodes[episode.season - 1][index]
-                      ? "bg-green-500"
-                      : "bg-gray-600 hover:bg-red-600"
-                      } rounded-full w-5 h-5 mr-2 mb-2`}
+                    className={`${
+                      savedEpisodes[episode.season - 1][index]
+                        ? "bg-green-500"
+                        : "bg-gray-600 hover:bg-red-600"
+                    } rounded-full w-5 h-5 mr-2 mb-2`}
                     onClick={() => handleOneSave(index)}
                   />
                 )}
                 {/* episodes details */}({episode.number}) {episode.name} |{" "}
                 <span className="text-red-500">{episode.runtime} </span> minutes
               </h2>
-            </div>
-            <div className="p-4">
-              <p className=" text-lg font-semibold text-gray-500 mb-2">
+              <p className="text-lg font-semibold text-gray-500 mb-2">
                 {episode.airdate}
               </p>
+            </div>
+            <div className="p-4">
               {episode.image?.medium && (
                 <img
                   className="rounded float-left md:float-right p-1"
@@ -164,7 +164,6 @@ export default function EpisodesCard({
             </div>
           </div>
           <hr className="border-red-600 mb-4 mt-4" />
-
         </div>
       ))}
     </div>
