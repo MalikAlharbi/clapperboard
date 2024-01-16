@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
+import { useParams } from "react-router-dom";
 import {
   uploadImage,
   getImg,
@@ -21,9 +22,9 @@ export default function ProfilePage() {
   const [dateJoined, setDateJoined] = useState();
   const [totalShows, setTotalShows] = useState(0);
   const [currentStatus, setCurrentStatus] = useState();
-  const [username, setUsername] = useState("");
   const [isOwner, setIsOwner] = useState(false);
   const [showsJson, setShowsJson] = useState(null);
+  let { username } = useParams();
   const handleImageUpload = () => {
     fileInputRef.current.click();
   };
@@ -37,12 +38,11 @@ export default function ProfilePage() {
     if (!upload) setError([true, upload.error]);
     else setImage(URL.createObjectURL(selectedFile));
   };
+
   const retriveProfile = async () => {
-    const currentUsername = await getUsername();
-    const url = window.location.pathname;
-    const username = url.substring(url.lastIndexOf("/") + 1);
-    if (currentUsername === username) setIsOwner(true);
     try {
+      const currentUsername = await getUsername();
+      if (currentUsername && currentUsername === username) setIsOwner(true);
       let profileData = await getProfileData(username);
       let dbShows = await getProfileShows(username);
       let shows = await Promise.all(
@@ -53,7 +53,6 @@ export default function ProfilePage() {
       if (shows.length != 0) setShowsJson(shows);
 
       setShowsJson(shows);
-      setUsername(username);
       setDateJoined(profileData.date_joined);
       setTotalShows(profileData.total_shows);
       setCurrentStatus(profileData.current_status);
