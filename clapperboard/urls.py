@@ -24,7 +24,8 @@ urlpatterns = [
     path('api/', include('api.urls')),
     path('', include('frontend.urls')),
 ]
+handler404 = 'api.views.custom_404'
 
 if settings.DEBUG:
         urlpatterns += static(settings.MEDIA_URL,
-                              document_root=settings.MEDIA_ROOT)
+                              document_root=settings.MEDIA_ROOT)                    

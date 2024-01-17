@@ -10,7 +10,7 @@ from django.core.mail import send_mail
 from django.core.validators import validate_email
 from django.db.models import Max, Subquery, OuterRef, Count
 from django.db.models.functions import Length
-from django.http import HttpResponseNotFound, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
@@ -28,7 +28,6 @@ from .serializers import *
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
 from django.http import JsonResponse
-from django.contrib import messages
 
 # User registration and email verification
 from .models import User, Profile
@@ -36,7 +35,6 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from django.conf import settings
 from django.http import JsonResponse
-from django.contrib import messages
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.urls import reverse
@@ -44,7 +42,10 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from django.conf import settings
 from django.http import JsonResponse
-from django.contrib import messages
+
+
+def custom_404(request, exception):
+    return redirect("http://127.0.0.1:8000/404")      
 
 class AllUsers(generics.ListAPIView):
     permission_classes = [IsAdminUser]
@@ -205,9 +206,9 @@ def verify_email(request, uidb64, token):
         user.save()
         login(request,user)
          #redirect to activation success page
-        return redirect("http://127.0.0.1:8000/activation")
+        return redirect("http://127.0.0.1:8000/activation", status=200)
     #redirect to 404 page
-    return redirect("http://127.0.0.1:8000/404")
+    return redirect("http://127.0.0.1:8000/404", status=404)
 
 
 @ensure_csrf_cookie

@@ -1,4 +1,4 @@
-from django.urls import path, re_path
+from django.urls import path
 from .views import index
 
 urlpatterns = [
@@ -9,5 +9,4 @@ urlpatterns = [
     path('profile/<username>',index),
     path('friends', index),
     path('404',index),
-    re_path(r'^.*$', index, name='404'),
 ]
