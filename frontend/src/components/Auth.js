@@ -39,7 +39,7 @@ export default function Auth(props) {
       if (response.success) {
         location.replace("/");
       } else {
-        setError("Invalid username or password");
+        setError(response.message);
       }
     } catch (error) {
       setError(error.message);

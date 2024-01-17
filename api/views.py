@@ -165,7 +165,11 @@ def signIn(request):
                 request.session.set_expiry(0)
             return JsonResponse({'success': True})
 
-        return JsonResponse({'success': False})
+        user_object = User.objects.get(username=username)
+        if user_object.is_active == False:
+            return JsonResponse({'success': False, 'message': 'Please activate your account to continue.'})
+
+        return JsonResponse({'success': False, 'message': 'Invalid username or password'})
 
 
 
@@ -465,4 +469,3 @@ def searchForUser(request, username):
     searchList = list(searchResult.values_list('id', flat=True))
     return  JsonResponse({"success":True,'user_ids': searchList})
 
-    
