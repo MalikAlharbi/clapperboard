@@ -1,13 +1,11 @@
 import React from "react";
 
-export default function Loading({ size }) {
-  if (!size) size = 8;
-
+export default function Loading({ size = 8, color = "red-500" }) {
   return (
     <div role="status">
       <svg
         aria-hidden="true"
-        className={`inline w-${size} h-${size} mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-red-500`}
+        className={`inline w-${size} h-${size} mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-${color} `}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

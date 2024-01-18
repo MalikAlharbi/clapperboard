@@ -27,7 +27,7 @@ export default function Auth(props) {
     else
       return (
         <p className="inline-flex bg-blue-600 items-center justify-center w-full py-2 rounded-full text-xl text-center text-white font-montserrat">
-          <Loading />
+          <Loading color={"green-500"} />
         </p>
       );
   };
