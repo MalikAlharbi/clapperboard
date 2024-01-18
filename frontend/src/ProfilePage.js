@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   uploadImage,
   getImg,
@@ -12,12 +12,13 @@ import ItemList from "./components/ItemList";
 import Loading from "./components/Loading";
 import { AuthContext } from "./App";
 
+
 export default function ProfilePage() {
+  let navigate = useNavigate();
   const { isLoggedIn } = useContext(AuthContext);
   const fileInputRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState([false, ""]);
-  const [notFoundError, setNotFoundError] = useState({ error: false, msg: "" });
   const [image, setImage] = useState(null);
   const [dateJoined, setDateJoined] = useState();
   const [totalShows, setTotalShows] = useState(0);
@@ -39,7 +40,7 @@ export default function ProfilePage() {
     else setImage(URL.createObjectURL(selectedFile));
   };
 
-  const retriveProfile = async () => {
+  const retrieveProfile = async () => {
     try {
       const currentUsername = await getUsername();
       if (currentUsername && currentUsername === username) setIsOwner(true);
@@ -50,23 +51,23 @@ export default function ProfilePage() {
           return fetchInfo(show.showId);
         })
       );
-      if (shows.length != 0) setShowsJson(shows);
+      if (shows.length !== 0) setShowsJson(shows);
 
-      setShowsJson(shows);
       setDateJoined(profileData.date_joined);
       setTotalShows(profileData.total_shows);
       setCurrentStatus(profileData.current_status);
       let dbImg = await getImg(username);
       if (dbImg) setImage(dbImg);
-    } catch (error) {
-      setNotFoundError({ error: true, msg: "User not found (404)" });
-    }
 
+    } catch (error) {
+      setLoading(false);
+      navigate("http://127.0.0.1:8000/404");
+    }
     setLoading(false);
   };
 
   useEffect(() => {
-    retriveProfile();
+    retrieveProfile();
   }, []);
 
   async function errorHider() {
@@ -79,23 +80,19 @@ export default function ProfilePage() {
       });
     }
   }, [error]);
+
   return (
     <>
       {error[0] && (
-        <div class="absloute bottom-0  right-0 inset-x-0 flex justify-center items-center">
-          <div class="bg-red-500 text-white py-2 px-4 rounded shadow-lg transition-all duration-300 transform translate-y-0">
+        <div className="absolute bottom-0 right-0 inset-x-0 flex justify-center items-center">
+          <div className="bg-red-500 text-white py-2 px-4 rounded shadow-lg transition-all duration-300 transform translate-y-0">
             {error[1]}
           </div>
         </div>
       )}
+      {!loading ? (
 
-      {notFoundError.error && (
-        <div class="flex flex-col items-center">
-          <div class="text-red-500 text-2xl">{notFoundError.msg}</div>
-        </div>
-      )}
 
-      {!loading && !notFoundError.error ? (
         <div className="flex flex-col items-center mt-10">
           <div className="flex flex-row mb-10">
             <>
@@ -157,11 +154,12 @@ export default function ProfilePage() {
             username={username}
           />
         </div>
-      ) : (
-        <div className="flex justify-center items-center h-screen">
-          <Loading size={16} />
-        </div>
-      )}
+      )
+        : (
+          <div className="flex justify-center items-center h-screen">
+            <Loading size={16} />
+          </div>
+        )}
     </>
   );
 }
