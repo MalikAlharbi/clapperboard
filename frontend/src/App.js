@@ -9,6 +9,7 @@ import UserShowsPage from "./UserShowsPage";
 import ProfilePage from "./ProfilePage";
 import FriendsPage from "./FriendsPage";
 import NotFoundPage from "./NotFoundPage";
+import PasswordResetPage from "./PasswordResetPage"
 import { is_authenticated, getUsername } from "./ApiRequest";
 
 export const AuthContext = createContext();
@@ -42,6 +43,7 @@ export default function App() {
             <Routes>
               <Route index element={<HomePage />} />
               <Route path="activation" element={<ActivationPage />} />
+              <Route path='password_reset/:uidb64/:token' element={<PasswordResetPage />} />
               <Route path="browse" element={<BrowsePage />} />
               <Route path="myshows" element={<UserShowsPage />} />
               <Route path={`profile/:username`} element={<ProfilePage />} />

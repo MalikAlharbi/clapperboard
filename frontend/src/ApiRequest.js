@@ -68,6 +68,25 @@ export const signUp = async (username, email, password, rememberMe) => {
   return data;
 };
 
+export const forgotPassword = async (email) => {
+  if (!email)
+    throw new Error("Missing email");
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/password_reset`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+
+    body: JSON.stringify({
+      userEmail: email,
+    }),
+  });
+  const data = await response.json();
+  return data;
+};
+
 export const is_authenticated = async () => {
   const csrftoken = getCookie("csrftoken");
   const response = await fetch(`/api/is-authenticated`, {
@@ -362,9 +381,44 @@ export const searchForUser = async (username) => {
   const data = await response.json();
   return data;
 };
+
+
+export const verify_link = async (uidb64, token) => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/verify-link/${uidb64}/${token}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  });
+  const data = await response.json();
+  return data;
+};
+
+export const reset_password = async (uidb64, token, password) => {
+  if (!password) throw new Error("Missing password");
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch("/api/reset_password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+    body: JSON.stringify({
+      uidb64: uidb64,
+      token: token,
+      password: password,
+
+    }),
+  });
+  const data = await response.json();
+  return data;
+};
 export default [
   signIn,
   signUp,
+  forgotPassword,
   is_authenticated,
   topShows,
   latestEpisodes,
@@ -378,4 +432,7 @@ export default [
   getProfileShows,
   getProfiSavedEpisodes,
   searchForUser,
+  verify_link,
+  reset_password,
+
 ];

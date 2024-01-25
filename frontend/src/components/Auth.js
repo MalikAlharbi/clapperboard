@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { signIn, signUp } from "../ApiRequest";
+import { signIn, signUp, forgotPassword } from "../ApiRequest";
 import { MdMarkEmailUnread, MdMarkEmailRead } from "react-icons/md";
 import Loading from "./Loading";
 //finished, make activion page now.
 export default function Auth(props) {
   const { authRef } = props;
   const [login, setIsLogin] = useState(true);
+  const [forgotWindow, setForgotWindow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -14,16 +15,28 @@ export default function Auth(props) {
   const [successSignUp, setSuccessSignUp] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
-  const authButtons = (currentWindow) => {
-    if (!loading)
-      return (
-        <button
-          className="inline-flex bg-blue-600 items-center justify-center w-full py-2 rounded-full text-xl text-center text-white font-montserrat"
-          type="submit"
-        >
-          {currentWindow}
-        </button>
-      );
+  const authButtons = (currentWindow, forgotWindow) => {
+    if (!loading) {
+      if (forgotWindow)
+        return (
+          <button
+            className="inline-flex bg-blue-600 items-center justify-center w-full py-2 rounded-full text-xl text-center text-white font-montserrat"
+            type="submit"
+            onClick={handleForgot}
+          >
+            {currentWindow}
+          </button>
+        );
+      else
+        return (
+          <button
+            className="inline-flex bg-blue-600 items-center justify-center w-full py-2 rounded-full text-xl text-center text-white font-montserrat"
+            type="submit"
+          >
+            {currentWindow}
+          </button>
+        );
+    }
     else
       return (
         <p className="inline-flex bg-blue-600 items-center justify-center w-full py-2 rounded-full text-xl text-center text-white font-montserrat">
@@ -63,6 +76,21 @@ export default function Auth(props) {
     setLoading(false);
   };
 
+  const handleForgot = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    const response = await forgotPassword(email);
+    if (response.success)
+      setSuccessSignUp(true);
+    else
+      setError(response.message);
+
+
+    setLoading(false);
+  };
+
+
+
   useEffect(() => {
     if (props.login != null) setIsLogin(props.login);
   }, []);
@@ -73,7 +101,10 @@ export default function Auth(props) {
     setPassword("");
     setError("");
     setRememberMe(false);
-  }, [login]);
+  }, [login, forgotWindow, successSignUp]);
+
+
+
 
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 z-50 justify-center items-center pl-10 pr-10 max-h-2xl h-screen w-screen grid place-items-center overflow-y-scroll">
@@ -93,6 +124,8 @@ export default function Auth(props) {
           />
           clapperboard
         </a>
+        {error && <p className="text-sm font-bold text-red-600">{error}</p>}
+
         {successSignUp ? (
           <div className="flex items-center">
             <MdMarkEmailUnread size={80} />
@@ -100,12 +133,30 @@ export default function Auth(props) {
               We've sent email verification to your email. Verify to continue!
             </p>
           </div>
+        ) : forgotWindow ? (
+          <form onSubmit={handleForgot}>
+            <label htmlFor="email" className="font-bold text-lg text-white">
+              Enter your account email
+            </label>
+            <br />
+            <input
+              required
+              type="email"
+              id="email"
+              name="email"
+              className="sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 text-black"
+              placeholder="name@company.com"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+            <br />
+            {authButtons("Send email reset", true)}
+          </form>
         ) : (
           <form
             className="space-y-2 md:space-y-2"
             onSubmit={login ? handleSignIn : handleSignUp}
           >
-            {error && <p className="text-sm font-bold text-red-600">{error}</p>}
             <label htmlFor="username" className="font-bold text-lg text-white">
               Username
             </label>
@@ -180,6 +231,7 @@ export default function Auth(props) {
                 <a
                   href="#"
                   className="ml-5 text-sm font-bold text-blue-500 hover:underline"
+                  onClick={() => setForgotWindow(true)}
                 >
                   Forgot password?
                 </a>
