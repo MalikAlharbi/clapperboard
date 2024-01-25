@@ -155,24 +155,33 @@ class UserShowUpdate(APIView):
 @ensure_csrf_cookie
 def signIn(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        username = data["username"]
-        password = data["password"]
-        rememberMe = data["rememberMe"]
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            if not rememberMe:
-                request.session.set_expiry(0)
-            return JsonResponse({'success': True})
+        try:
+            data = json.loads(request.body)
+            username = data["username"]
+            password = data["password"]
+            rememberMe = data["rememberMe"]
+            user = authenticate(request, username=username, password=password)
 
-        user_object = User.objects.get(username=username)
-        if user_object.is_active == False:
-            return JsonResponse({'success': False, 'message': 'Please activate your account to continue.'})
+            if user is not None:
+                login(request, user)
+                if not rememberMe:
+                    request.session.set_expiry(0)
+                return JsonResponse({'success': True})
 
-        return JsonResponse({'success': False, 'message': 'Invalid username or password'})
+            user_object = User.objects.get(username=username)
+            if user_object.is_active == False:
+                return JsonResponse({'success': False, 'message': 'Please activate your account to continue.'})
 
+            return JsonResponse({'success': False, 'message': 'Invalid password'})
 
+        except KeyError:
+            return JsonResponse({'success': False, 'message': 'Missing required fields'})
+        except User.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'User does not exist'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request'})
 
 
 def send_activation_email(request, user):
