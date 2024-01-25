@@ -210,6 +210,28 @@ def verify_email(request, uidb64, token):
     #redirect to 404 page
     return redirect("http://127.0.0.1:8000/404", status=404)
 
+def checkPassword(password):
+    # Password checking
+    min_length = 7
+    validator = CommonPasswordValidator()
+    try:
+        validator.validate(password=password)
+    except ValidationError as validation_error:
+        return validation_error.message
+
+    if len(password) < min_length:
+        return 'Password length must be at least 7'
+
+    # Check for digit
+    if not any(char.isdigit() for char in password):
+        return 'Password must contain at least one digit'
+
+    # Check for letter
+    if not any(char.isalpha() for char in password):
+        return 'Password must contain at least one letter'
+
+    return True
+
 
 @ensure_csrf_cookie
 def signUp(request):
@@ -217,7 +239,6 @@ def signUp(request):
         data = json.loads(request.body)
         username = data["username"]
         password = data["password"]
-        min_length = 7
 
         email = data["email"]
         username_exists = User.objects.filter(username=username).exists()
@@ -239,33 +260,18 @@ def signUp(request):
             validate_email(email)
         except ValidationError as validation_error:
             return JsonResponse({'success': False, 'error': validation_error.message})
+        passwordCheck = checkPassword(password)
+        if passwordCheck is True:
+            user = User.objects.create_user(
+                username=username, email=email, password=password)
 
-        # Password checking
-        validator = CommonPasswordValidator()
-        try:
-            validator.validate(password=password)
-        except ValidationError as validation_error:
-            return JsonResponse({'success': False, 'error': validation_error.message})
-
-        if len(password) < min_length:
-            return JsonResponse({'success': False, 'error': 'Password length must be at least 7'})
-
-        # Check for digit
-        if not any(char.isdigit() for char in password):
-            return JsonResponse({'success': False, 'error': 'Password must contain at least one digit'})
-
-        # Check for letter
-        if not any(char.isalpha() for char in password):
-            return JsonResponse({'success': False, 'error': 'Password must contain at least one letter'})
-
-        user = User.objects.create_user(
-            username=username, email=email, password=password)
-
-        if user is not None:
-            user.is_active = False
-            user.save()
-            send_activation_email(request,user)
-            return JsonResponse({'success': True, 'verification_url': 'verification_url have been sent'})
+            if user is not None:
+                user.is_active = False
+                user.save()
+                send_activation_email(request, user)
+                return JsonResponse({'success': True, 'verification_url': 'verification_url have been sent'})
+        else:
+            return JsonResponse({"success": False, 'error': passwordCheck})
 
         return JsonResponse({'success': False})
 
