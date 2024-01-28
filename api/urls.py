@@ -3,6 +3,8 @@ from .views import *
 urlpatterns = [
     path('allusers', AllUsers.as_view()),
     path('user-shows/', UserShows.as_view()),
+    path('watchlist/', getWatchlistShows, name='get_watchlist_shows'),
+
     path('user-episodes/', UserEpisodes.as_view()),
     path('top-shows', TopShows.as_view()),
     path('saveshow', UserShowUpdate.as_view()),
@@ -38,5 +40,13 @@ urlpatterns = [
     path('friendReqDecision', friendReqDecision, name='friendReqDecision'),
     path('deleteFriend', deleteFriend, name='deleteFriend'),
     path('searchForUser/<str:username>', searchForUser, name='searchForUser'),
+    path('postfavourite/<int:showId>/<str:action>/',
+         favouriteHandler, name='favourite_handler'),
+    path('postwatchlist/<int:showId>/<str:action>/',
+         watchlistHandler, name='watchlist_handler'),
+    path('getfavorite/<int:showId>/',
+         getFavoriteStatus, name='get_favorite_status'),
+    path('getwatchlist/<int:showId>/',
+         getWatchlistStatus, name='get_watchlist_status'),
 
 ]

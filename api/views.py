@@ -22,7 +22,7 @@ from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import User, Profile
+from .models import User, Profile, ShowsList
 from .serializers import *
 
 # Authentication and User-related functions
@@ -127,11 +127,23 @@ class UserShowUpdate(APIView):
 
             queryset = UserShow.objects.filter(
                 user=user_id, showId=showId, season=season)
+            showsListQuery = UserShow.objects.filter(
+                user=user_id, showId=showId).exists()
+            if not showsListQuery:
+                newRecord = ShowsList.objects.create(
+                    user=user_id, showId=showId, favorite=False, watch_list=False)
+                newRecord.save()
+
             # if show is already in the database then update else create a new row
             if queryset.exists():
                 # when user unclick a season delete it from db
                 if all(boolean == 'false' for boolean in watched_episodes_list):
                     queryset.delete()
+                    showsListQuery = UserShow.objects.filter(
+                        user=user_id, showId=showId).exists()
+                    if not showsListQuery:
+                        newRecord = ShowsList.objects.filter(
+                            user=user_id, showId=showId, favorite=False, watch_list=False).delete()
                     return Response("RECORD DELETED", status=status.HTTP_200_OK)
 
                 else:
@@ -141,6 +153,7 @@ class UserShowUpdate(APIView):
                     newData.modified_index = modified_index
                     newData.save(update_fields=[
                                  'watched_episodes', 'modified_at', 'modified_index'])
+
                     return Response(UserShowSerializer(newData).data, status=status.HTTP_200_OK)
             elif not all(boolean == 'false' for boolean in watched_episodes_list):
                 newData = UserShow(user=user_id,
@@ -561,3 +574,68 @@ def searchForUser(request, username):
 
     searchList = list(searchResult.values_list('id', flat=True))
     return JsonResponse({"success": True, 'user_ids': searchList})
+
+
+def favouriteHandler(request, showId, action):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        showId = data["showId"]
+        action = bool(data["action"])
+        user = User.objects.get(username=request.user)
+        query, _ = ShowsList.objects.get_or_create(user=user, showId=showId)
+        query.favorite = action
+        query.save()
+        return JsonResponse({'success': True, 'message': 'Favorite status updated successfully.'})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+
+def watchlistHandler(request, showId, action):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        showId = data["showId"]
+        action = bool(data["action"])
+        user = User.objects.get(username=request.user)
+        query, _ = ShowsList.objects.get_or_create(user=user, showId=showId)
+        query.watch_list = action
+        query.save()
+        return JsonResponse({'success': True, 'message': 'Watchlist status updated successfully.'})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+
+def getFavoriteStatus(request, showId):
+    if request.method == "GET":
+        user = request.user
+        try:
+            user_show = ShowsList.objects.get(user=user, showId=showId)
+            return JsonResponse({'success': True, 'favorite': user_show.favorite})
+        except ShowsList.DoesNotExist:
+            return JsonResponse({'success': False, 'favorite': False})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+
+def getWatchlistStatus(request, showId):
+    if request.method == "GET":
+        user = request.user
+        try:
+            user_show = ShowsList.objects.get(user=user, showId=showId)
+            return JsonResponse({'success': True, 'watchlist': user_show.watch_list})
+        except ShowsList.DoesNotExist:
+            return JsonResponse({'success': False, 'watchlist': False})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+
+def getWatchlistShows(request):
+    if request.method == "GET":
+        user = request.user
+        try:
+            user_shows = ShowsList.objects.filter(user=user, watch_list=True)
+            if user_shows.exists():
+                show_ids = [user_show.showId for user_show in user_shows]
+                return JsonResponse({'success': True, 'watchlist': show_ids})
+            else:
+                return JsonResponse({'success': False, 'watchlist': []})
+        except ShowsList.DoesNotExist:
+            return JsonResponse({'success': False, 'watchlist': []})
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'})
+
+# TODO create a new model for favorute and watchlist

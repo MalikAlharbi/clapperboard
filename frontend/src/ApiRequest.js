@@ -139,6 +139,20 @@ export const getUserShows = async () => {
   return data;
 };
 
+export const getUserWatchlist = async () => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/watchlist/`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+  });
+  const data = await response.json();
+  console.log(data);
+  return data.watchlist;
+};
+
 export const getSavedEpisodes = async (show_id) => {
   const csrftoken = getCookie("csrftoken");
   const response = await fetch(`/api/user-episodes/?show=${show_id}`, {
@@ -415,6 +429,46 @@ export const reset_password = async (uidb64, token, password) => {
   const data = await response.json();
   return data;
 };
+
+export const getFavoriteStatus = async (showId) => {
+  const response = await fetch(`/api/getfavorite/${showId}/`);
+  const data = await response.json();
+  return data.favorite;
+};
+
+export const getWatchlistStatus = async (showId) => {
+  const response = await fetch(`/api/getwatchlist/${showId}/`);
+  const data = await response.json();
+  return data.watchlist;
+};
+
+export const postfavorite = async (showId, action) => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/postfavourite/${showId}/${action}/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+    body: JSON.stringify({ showId: showId, action: action }),
+  });
+  const data = await response.json();
+  return data.message;
+};
+
+export const postwatchlist = async (showId, action) => {
+  const csrftoken = getCookie("csrftoken");
+  const response = await fetch(`/api/postwatchlist/${showId}/${action}/`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRFToken": csrftoken,
+    },
+    body: JSON.stringify({ showId: showId, action: action }),
+  });
+  const data = await response.json();
+  return data.message;
+};
 export default [
   signIn,
   signUp,
@@ -434,5 +488,9 @@ export default [
   searchForUser,
   verify_link,
   reset_password,
+  getFavoriteStatus,
+  getWatchlistStatus,
+  postfavorite,
+  postwatchlist,
 
 ];

@@ -10,6 +10,7 @@ import ProfilePage from "./ProfilePage";
 import FriendsPage from "./FriendsPage";
 import NotFoundPage from "./NotFoundPage";
 import PasswordResetPage from "./PasswordResetPage"
+import WatchListPage from "./WatchListPage";
 import { is_authenticated, getUsername } from "./ApiRequest";
 
 export const AuthContext = createContext();
@@ -46,6 +47,7 @@ export default function App() {
               <Route path='password_reset/:uidb64/:token' element={<PasswordResetPage />} />
               <Route path="browse" element={<BrowsePage />} />
               <Route path="myshows" element={<UserShowsPage />} />
+              <Route path="watchlist" element={<WatchListPage />} />
               <Route path={`profile/:username`} element={<ProfilePage />} />
               <Route path="friends" element={<FriendsPage />} />
               <Route path="404" element={<NotFoundPage />} />

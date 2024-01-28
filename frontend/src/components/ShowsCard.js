@@ -5,7 +5,12 @@ import AddToMyList from "./AddToMyList";
 import Auth from "./Auth";
 import Loading from "./Loading";
 import InfoPopup from "./InfoPopUp";
-import { getProfiSavedEpisodes, getSavedEpisodes } from "../ApiRequest";
+import {
+  getProfiSavedEpisodes, getSavedEpisodes, getFavoriteStatus, getWatchlistStatus,
+  postfavorite,
+  postwatchlist
+} from "../ApiRequest";
+import { FaRegHeart, FaHeart, FaRegBookmark, FaBookmark } from "react-icons/fa";
 
 export default function ShowsCard({
   showId,
@@ -24,6 +29,81 @@ export default function ShowsCard({
   const infoPopUpRef = useRef(null);
   const addToListPopUpRef = useRef(null);
   const [imageLoading, setImageLoading] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
+  const [filledBook, setFilledBook] = useState(false);
+  const [filledHeart, setFilledHeart] = useState(false);
+
+
+  const emptyButtons = (currentButton) => {
+    if (currentButton === "Heart") {
+      return (
+        <button
+          className="absolute top-0 left-0 bg-black p-1"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onClick={() => handleFaButtons("Heart", true)}
+        >
+          <FaRegHeart color={isHovered ? "red" : "white"} size={25} />
+        </button>
+      );
+    }
+    else {
+      return (
+        <button
+          className="absolute top-0 left-0 bg-black p-1"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onClick={() => handleFaButtons("Bookmark", true)}
+        >
+          <FaRegBookmark color={isHovered ? "orange" : "white"} size={25} />
+        </button>
+      );
+    }
+  };
+
+  const filledButtons = (currentButton) => {
+    if (currentButton === "Heart") {
+      return (
+        <button
+          className="absolute top-0 left-0 bg-black p-1"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onClick={() => handleFaButtons("Heart", false)}
+        >
+          <FaHeart color={isHovered ? "white" : "red"} size={25} />
+        </button>
+      );
+    }
+    else {
+      return (
+        <button
+          className="absolute top-0 left-0 bg-black p-1"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          onClick={() => handleFaButtons("Bookmark", false)}
+        >
+          <FaBookmark color={isHovered ? "white" : "orange"} size={25} />
+        </button>
+      );
+    }
+  };
+
+  const handleFaButtons = async (currentButton, action) => {
+    //Action = true = add
+    //TODO
+    if (currentButton === 'Heart') {
+      const postReq = await postfavorite(showId, action)
+      setFilledHeart(action)
+    }
+    else {
+      const postReq = await postwatchlist(showId, action)
+      setFilledBook(action)
+    }
+
+
+  }
+
+
 
   function handleClickOutside(event) {
     if (infoPopUpRef.current && !infoPopUpRef.current.contains(event.target))
@@ -73,12 +153,17 @@ export default function ShowsCard({
     await isLoggedIn;
     if (isLoggedIn) {
       await getEpisodes();
+      const fav = await getFavoriteStatus(showId)
+      const watchList = await getWatchlistStatus(showId)
+      setFilledHeart(fav);
+      setFilledBook(watchList)
     }
     setIsLoading(false);
   }
 
   useEffect(() => {
     fetchData();
+
   }, [isLoggedIn]);
 
   useEffect(() => {
@@ -128,7 +213,6 @@ export default function ShowsCard({
         />
       )}
       <br />
-
       <label className="">
         {year != null ? (
           <p className=" not-italic font-bold text-white">
@@ -142,21 +226,36 @@ export default function ShowsCard({
       {!isLoading && (
         <>
           {isWatching ? (
-            <button
-              className="inline-flex border border-green-600 absoulte  items-center justify-center w-48 h-12 py-2 rounded-md"
-              onClick={() => setIsAddOpen(true)}
-            >
-              <p className="text-xl text-center text-green-600 ">
-                {nextEpisode}
-              </p>
-            </button>
+            <>
+              {filledHeart ? (
+                filledButtons("Heart")
+              ) : (
+                emptyButtons("Heart")
+              )}
+              <button
+                className="inline-flex border border-green-600 absoulte  items-center justify-center w-48 h-12 py-2 rounded-md"
+                onClick={() => setIsAddOpen(true)}
+              >
+                <p className="text-xl text-center text-green-600 ">
+                  {nextEpisode}
+                </p>
+              </button>
+            </>
           ) : (
-            <button
-              className="inline-flex border border-red-600 absoulte  items-center justify-center w-48 h-12 py-2 rounded-md"
-              onClick={() => setIsAddOpen(true)}
-            >
-              <p className="text-xl text-center text-red-600">Add to My List</p>
-            </button>
+            <>
+
+              {filledBook && isLoggedIn ? (
+                filledButtons("Bookmark")
+              ) : (
+                emptyButtons("Bookmark")
+              )}
+              <button
+                className="inline-flex border border-red-600 absoulte  items-center justify-center w-48 h-12 py-2 rounded-md"
+                onClick={() => setIsAddOpen(true)}
+              >
+                <p className="text-xl text-center text-red-600">Add to My List</p>
+              </button>
+            </>
           )}
         </>
       )}

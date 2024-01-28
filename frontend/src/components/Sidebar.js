@@ -5,6 +5,8 @@ import { BiLogIn, BiLogOut } from "react-icons/bi";
 import { BsFillEnvelopePaperHeartFill } from "react-icons/bs";
 import { SlScreenDesktop } from "react-icons/sl";
 import { FaUserFriends } from "react-icons/fa";
+import { IoBookmarks } from "react-icons/io5";
+
 import { signOut } from "../ApiRequest";
 import Auth from "./Auth";
 import SidebarProfile from "./SidebarProfile";
@@ -74,6 +76,19 @@ export default function Sidebar({ isLoggedIn, username }) {
                     </span>
                   </Link>
                 </li>
+
+                <li className="border-t border-gray-600 pt-2">
+                  <Link
+                    to="/watchlist"
+                    className="flex items-center p-2 text-white rounded-lg dark:text-white hover:bg-red-700 dark:hover:bg-red-700 group"
+                  >
+                    <IoBookmarks size={20} />
+                    <span className="flex-1 ml-3 whitespace-nowrap">
+                      Watchlist
+                    </span>
+                  </Link>
+                </li>
+
                 <li className="border-t border-gray-600 pt-2">
                   <Link
                     to="/browse"
