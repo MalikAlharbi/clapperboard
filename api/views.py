@@ -127,21 +127,28 @@ class UserShowUpdate(APIView):
 
             queryset = UserShow.objects.filter(
                 user=user_id, showId=showId, season=season)
-            showsListQuery = UserShow.objects.filter(
+            userShowsQuery = UserShow.objects.filter(
                 user=user_id, showId=showId).exists()
-            if not showsListQuery:
-                newRecord = ShowsList.objects.create(
-                    user=user_id, showId=showId, favorite=False, watch_list=False)
-                newRecord.save()
+            if not userShowsQuery:
+                showsListQuery = ShowsList.objects.filter(
+                    user=user_id, showId=showId)
+                if showsListQuery.exists():
+                    showsListQuery = showsListQuery.first()
+                    showsListQuery.watch_list = False
+                    showsListQuery.save()
+                else:
+                    newRecord = ShowsList.objects.create(
+                        user=user_id, showId=showId, favorite=False, watch_list=False)
+                    newRecord.save()
 
             # if show is already in the database then update else create a new row
             if queryset.exists():
                 # when user unclick a season delete it from db
                 if all(boolean == 'false' for boolean in watched_episodes_list):
                     queryset.delete()
-                    showsListQuery = UserShow.objects.filter(
+                    userShowsQuery = UserShow.objects.filter(
                         user=user_id, showId=showId).exists()
-                    if not showsListQuery:
+                    if not userShowsQuery:
                         newRecord = ShowsList.objects.filter(
                             user=user_id, showId=showId, favorite=False, watch_list=False).delete()
                     return Response("RECORD DELETED", status=status.HTTP_200_OK)
