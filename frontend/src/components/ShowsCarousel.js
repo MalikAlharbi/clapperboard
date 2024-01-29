@@ -49,11 +49,14 @@ export default function ShowsCarousel({ showsJson }) {
             {latestEpisodes.map((show, index) => (
               <div className="relative" key={index}>
                 <div className="flex justify-center items-center">
+                  {show?.image?.original != null ?
                   <img
                     src={show?.image?.original}
                     alt="Episode"
                     className="max-w-lg max-h-screen relative rounded-md"
-                  />
+                    /> : (
+                      <div className="w-full h-32 relative rounded-md " />
+                    )}
                 </div>
                 <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-center pb-4">
                   <div className="bg-black bg-opacity-50 text-white p-4 text-center">
