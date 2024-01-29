@@ -120,6 +120,7 @@ class UserShowUpdate(APIView):
             showId = int(serializer.validated_data.get('showId'))
             showName = serializer.validated_data.get('showName')
             season = int(serializer.validated_data.get('season'))
+            apiSeason = int(serializer.validated_data.get('apiSeason'))
             modified_index = serializer.validated_data.get('modified_index')
             watched_episodes = serializer.validated_data.get(
                 'watched_episodes')
@@ -164,7 +165,7 @@ class UserShowUpdate(APIView):
                     return Response(UserShowSerializer(newData).data, status=status.HTTP_200_OK)
             elif not all(boolean == 'false' for boolean in watched_episodes_list):
                 newData = UserShow(user=user_id,
-                                   showId=showId, showName=showName, season=season, watched_episodes=watched_episodes, modified_index=modified_index)
+                                   showId=showId, showName=showName, season=season, apiSeason=apiSeason, watched_episodes=watched_episodes, modified_index=modified_index)
                 newData.modified_at = timezone.now()
                 newData.save()
                 return Response(UserShowSerializer(newData).data, status=status.HTTP_201_CREATED)

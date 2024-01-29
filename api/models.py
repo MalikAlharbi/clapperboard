@@ -8,6 +8,7 @@ class UserShow(models.Model):
     showId = models.IntegerField()
     showName = models.TextField(default='')
     season = models.IntegerField()
+    apiSeason = models.IntegerField(default=-1)
     watched_episodes = models.TextField(default='')
     modified_at = models.DateTimeField(auto_now=True)
     modified_index = models.IntegerField(default=-1)

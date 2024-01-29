@@ -14,7 +14,7 @@ export default function ShowsCarousel({ showsJson }) {
           if (element.modified_index > -1) {
             const data = await fetchEpisode(
               element.showId,
-              element.season,
+              element.apiSeason,
               element.modified_index + 1
             );
             return data;
@@ -23,7 +23,7 @@ export default function ShowsCarousel({ showsJson }) {
             const last = list.lastIndexOf("true") + 1;
             const data = await fetchEpisode(
               element.showId,
-              element.season,
+              element.apiSeason,
               last
             );
             return data;
@@ -50,10 +50,10 @@ export default function ShowsCarousel({ showsJson }) {
               <div className="relative" key={index}>
                 <div className="flex justify-center items-center">
                   {show?.image?.original != null ?
-                  <img
-                    src={show?.image?.original}
-                    alt="Episode"
-                    className="max-w-lg max-h-screen relative rounded-md"
+                    <img
+                      src={show?.image?.original}
+                      alt="Episode"
+                      className="max-w-lg max-h-screen relative rounded-md"
                     /> : (
                       <div className="w-full h-32 relative rounded-md " />
                     )}

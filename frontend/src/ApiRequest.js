@@ -110,6 +110,7 @@ export const latestEpisodes = async () => {
     },
   });
   const data = await response.json();
+  console.log(data);
   return data;
 };
 
@@ -170,6 +171,7 @@ export const postSavedEpisodes = async (
   showId,
   savedEpisodes,
   seasonCurrentIndex,
+  apiSeason,
   dbIndex
 ) => {
   let showName = await fetchName(showId);
@@ -184,6 +186,7 @@ export const postSavedEpisodes = async (
       showId: showId,
       showName: showName,
       season: seasonCurrentIndex + 1,
+      apiSeason: apiSeason,
       watched_episodes: savedEpisodes.toString(),
       modified_index: dbIndex,
     }),

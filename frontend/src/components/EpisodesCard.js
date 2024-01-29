@@ -8,9 +8,11 @@ export default function EpisodesCard({
   setTotalSavedEpisodes,
   clickerReset,
   seasons,
+  apiS,
 }) {
   const [savedEpisodes, setSavedEpisodes] = useState(tracker);
   const [isMounted, setIsMounted] = useState(false);
+  const [apiSeason, setApiSeason] = useState(-1);
   const [dbIndex, setDbIndex] = useState(-1);
 
   const setTotal = async () => {
@@ -30,7 +32,9 @@ export default function EpisodesCard({
           showId,
           savedEpisodes[seasonCurrentIndex],
           seasonCurrentIndex,
-          dbIndex
+          apiSeason,
+          dbIndex,
+
         );
     }
   }, [savedEpisodes]);
@@ -52,6 +56,7 @@ export default function EpisodesCard({
 
   function handleUnknownSave(index, episode) {
     let epSeason = handleUnknownSeasons(episode);
+    setApiSeason(episode.season);
     let epIndex = 0;
     setSavedEpisodes((prevState) => {
       const newState = prevState.map((seasonEpisodes, seasonIndex) => {
@@ -75,6 +80,7 @@ export default function EpisodesCard({
 
   function handleOneSave(index) {
     let epIndex = 0;
+    setApiSeason(seasonCurrentIndex + 1)
     setSavedEpisodes((prevState) => {
       const newState = prevState.map((seasonEpisodes, seasonIndex) => {
         if (seasonIndex === episodes[index].season - 1) {
@@ -113,6 +119,7 @@ export default function EpisodesCard({
     });
 
     setDbIndex(-1);
+    setApiSeason(apiS);
   }
 
   return (
@@ -123,7 +130,7 @@ export default function EpisodesCard({
             <div className="p-2 flex flex-col sm:flex-row justify-between">
               <h2 className="text-l font-semibold text-white">
                 {/* circle for episodes */}
-                {seasons[0].number > 0 ? (
+                {seasons[0].number > 1 ? (
                   <button
                     className={`${savedEpisodes[handleUnknownSeasons(episode)][index]
                       ? "bg-green-500"
