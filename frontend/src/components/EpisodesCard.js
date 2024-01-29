@@ -116,7 +116,7 @@ export default function EpisodesCard({
   }
 
   return (
-    <div className="max-w-[660px] max-h-[350px] md:max-h-[650px] overflow-y-auto scroll-smooth mx-auto">
+    <div className="max-w-[660px] max-h-[350px] md:max-h-[650px] overflow-y-auto scroll-smooth mx-auto" key={seasonCurrentIndex}>
       {episodes?.map((episode, index) => (
         <div key={episode.id} className="m-4">
           <div className="rounded-lg shadow-md overflow-hidden">
@@ -125,20 +125,18 @@ export default function EpisodesCard({
                 {/* circle for episodes */}
                 {seasons[0].number > 0 ? (
                   <button
-                    className={`${
-                      savedEpisodes[handleUnknownSeasons(episode)][index]
-                        ? "bg-green-500"
-                        : "bg-gray-600 hover:bg-red-600"
-                    } rounded-full w-5 h-5 mr-2 mb-2`}
+                    className={`${savedEpisodes[handleUnknownSeasons(episode)][index]
+                      ? "bg-green-500"
+                      : "bg-gray-600 hover:bg-red-600"
+                      } rounded-full w-5 h-5 mr-2 mb-2`}
                     onClick={() => handleUnknownSave(index, episode)}
                   />
                 ) : (
                   <button
-                    className={`${
-                      savedEpisodes[episode.season - 1][index]
-                        ? "bg-green-500"
-                        : "bg-gray-600 hover:bg-red-600"
-                    } rounded-full w-5 h-5 mr-2 mb-2`}
+                    className={`${savedEpisodes[episode.season - 1][index]
+                      ? "bg-green-500"
+                      : "bg-gray-600 hover:bg-red-600"
+                      } rounded-full w-5 h-5 mr-2 mb-2`}
                     onClick={() => handleOneSave(index)}
                   />
                 )}
