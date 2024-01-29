@@ -35,62 +35,65 @@ export default function ShowsCard({
 
 
   const emptyButtons = (currentButton) => {
-    if (currentButton === "Heart") {
-      return (
-        <button
-          className="absolute top-0 left-0 bg-black p-1"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onClick={() => handleFaButtons("Heart", true)}
-        >
-          <FaRegHeart color={isHovered ? "red" : "white"} size={25} />
-        </button>
-      );
-    }
-    else {
-      return (
-        <button
-          className="absolute top-0 left-0 bg-black p-1"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onClick={() => handleFaButtons("Bookmark", true)}
-        >
-          <FaRegBookmark color={isHovered ? "orange" : "white"} size={25} />
-        </button>
-      );
+    if (isLoggedIn) {
+      if (currentButton === "Heart") {
+        return (
+          <button
+            className="absolute top-0 left-0 bg-black p-1"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={() => handleFaButtons("Heart", true)}
+          >
+            <FaRegHeart color={isHovered ? "red" : "white"} size={25} />
+          </button>
+        );
+      }
+      else {
+        return (
+          <button
+            className="absolute top-0 left-0 bg-black p-1"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={() => handleFaButtons("Bookmark", true)}
+          >
+            <FaRegBookmark color={isHovered ? "orange" : "white"} size={25} />
+          </button>
+        );
+      }
     }
   };
 
   const filledButtons = (currentButton) => {
-    if (currentButton === "Heart") {
-      return (
-        <button
-          className="absolute top-0 left-0 bg-black p-1"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onClick={() => handleFaButtons("Heart", false)}
-        >
-          <FaHeart color={isHovered ? "white" : "red"} size={25} />
-        </button>
-      );
-    }
-    else {
-      return (
-        <button
-          className="absolute top-0 left-0 bg-black p-1"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onClick={() => handleFaButtons("Bookmark", false)}
-        >
-          <FaBookmark color={isHovered ? "white" : "orange"} size={25} />
-        </button>
-      );
+    if (isLoggedIn) {
+      if (currentButton === "Heart") {
+        return (
+          <button
+            className="absolute top-0 left-0 bg-black p-1"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={() => handleFaButtons("Heart", false)}
+          >
+            <FaHeart color={isHovered ? "white" : "red"} size={25} />
+          </button>
+        );
+      }
+      else {
+        return (
+          <button
+            className="absolute top-0 left-0 bg-black p-1"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={() => handleFaButtons("Bookmark", false)}
+          >
+            <FaBookmark color={isHovered ? "white" : "orange"} size={25} />
+          </button>
+        );
+      }
     }
   };
 
   const handleFaButtons = async (currentButton, action) => {
     //Action = true = add
-    //TODO
     if (currentButton === 'Heart') {
       const postReq = await postfavorite(showId, action)
       setFilledHeart(action)
@@ -244,7 +247,7 @@ export default function ShowsCard({
           ) : (
             <>
 
-              {filledBook && isLoggedIn ? (
+              {filledBook ? (
                 filledButtons("Bookmark")
               ) : (
                 emptyButtons("Bookmark")
