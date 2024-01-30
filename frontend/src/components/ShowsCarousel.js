@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchEpisode, fetchInfo } from "../ShowsFetch";
+import { fetchEpisode, fetchImage } from "../ShowsFetch";
 import Loading from "./Loading";
 import { Carousel } from "flowbite-react";
 
@@ -17,6 +17,12 @@ export default function ShowsCarousel({ showsJson }) {
               element.apiSeason,
               element.modified_index + 1
             );
+            if (data?.image?.original == null) {
+              const imgUrl = await fetchImage(element.showId);
+              data.image = {
+                original: imgUrl,
+              }
+            }
             return data;
           } else {
             const list = element.watched_episodes.split(",");
@@ -26,6 +32,13 @@ export default function ShowsCarousel({ showsJson }) {
               element.apiSeason,
               last
             );
+            if (data?.image?.original == null) {
+              const imgUrl = await fetchImage(element.showId);
+              console.log(imgUrl)
+              data.image = {
+                original: imgUrl,
+              }
+            }
             return data;
           }
         })
@@ -49,14 +62,11 @@ export default function ShowsCarousel({ showsJson }) {
             {latestEpisodes.map((show, index) => (
               <div className="relative" key={index}>
                 <div className="flex justify-center items-center">
-                  {show?.image?.original != null ?
-                    <img
-                      src={show?.image?.original}
-                      alt="Episode"
-                      className="max-w-lg max-h-screen relative rounded-md"
-                    /> : (
-                      <div className="w-full h-32 relative rounded-md " />
-                    )}
+                  <img
+                    src={show?.image?.original}
+                    alt="Episode"
+                    className="max-w-lg max-h-screen relative rounded-md"
+                  />
                 </div>
                 <div className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-center pb-4">
                   <div className="bg-black bg-opacity-50 text-white p-4 text-center">

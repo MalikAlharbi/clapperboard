@@ -44,6 +44,15 @@ export const fetchEpisode = async (showId, season, episode) => {
   return data;
 };
 
+export const fetchImage = async (showId) => {
+  const response = await fetch(
+    `https://api.tvmaze.com/shows/${showId}/images`
+  );
+
+  const data = await response.json();
+  return data[0]?.resolutions?.medium?.url;
+};
+
 export default [
   fetchSearch,
   fetchInfo,
@@ -51,4 +60,5 @@ export default [
   fetchSeasons,
   fetchEpoisdes,
   fetchEpisode,
+  fetchImage,
 ];
