@@ -64,6 +64,7 @@ export default function EpisodesCard({
           return seasonEpisodes.map((episodeSaved, episodeIndex) => {
             if (episodeIndex === index) {
               epIndex = !episodeSaved ? episodeIndex : -1;
+              setDbIndex(epIndex);
               return !episodeSaved; // toggle the saved state of the episode
             } else {
               return episodeSaved;
@@ -75,7 +76,6 @@ export default function EpisodesCard({
       });
       return newState;
     });
-    setDbIndex(epIndex);
   }
 
   function handleOneSave(index) {
@@ -87,6 +87,7 @@ export default function EpisodesCard({
           return seasonEpisodes.map((episodeSaved, episodeIndex) => {
             if (episodeIndex === index) {
               epIndex = !episodeSaved ? episodeIndex : -1;
+              setDbIndex(epIndex);
               return !episodeSaved; // toggle the saved state of the episode
             } else {
               return episodeSaved;
@@ -98,7 +99,6 @@ export default function EpisodesCard({
       });
       return newState;
     });
-    setDbIndex(epIndex);
   }
 
   function handleAllSave() {
