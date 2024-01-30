@@ -20,6 +20,7 @@ export default function BrowsePage() {
       setShowsJson(data);
     });
   };
+  useEffect(() => { document.title = 'browse' }, [])
 
   return (
     <div className="flex flex-col h-screen">

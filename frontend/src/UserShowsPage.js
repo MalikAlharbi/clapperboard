@@ -30,6 +30,7 @@ export default function UserShowsPage() {
     fetchData();
     setIsLoading(false);
   }, [isLoggedIn]);
+  useEffect(() => { document.title = 'My Shows' }, [])
 
   return (
     <div className="flex flex-col h-screen">

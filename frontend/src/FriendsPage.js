@@ -66,6 +66,7 @@ export default function FriendsPage() {
       setStartLoading(false);
     }
     getCounts();
+    document.title = 'Friends'
   }, []);
 
   return (
@@ -73,25 +74,22 @@ export default function FriendsPage() {
       {!startLoading && (
         <div className="divide-x-2 divide-gray-600 text-l text-blue-600 mb-5 ">
           <button
-            className={`hover:text-red-600 hover:underline pr-2 ${
-              activeWindow === "myFriends" && "font-bold"
-            }`}
+            className={`hover:text-red-600 hover:underline pr-2 ${activeWindow === "myFriends" && "font-bold"
+              }`}
             onClick={handleFriends}
           >
             My Friends
           </button>
           <button
-            className={`hover:text-red-600 hover:underline pl-2 pr-2 ${
-              activeWindow === "friendRequests" && "font-bold"
-            }`}
+            className={`hover:text-red-600 hover:underline pl-2 pr-2 ${activeWindow === "friendRequests" && "font-bold"
+              }`}
             onClick={handleShowFriendReq}
           >
             Friend Requests ({friendRequests.friendReq.length})
           </button>
           <button
-            className={`hover:text-red-600 hover:underline pl-2 ${
-              activeWindow === "search" && "font-bold"
-            }`}
+            className={`hover:text-red-600 hover:underline pl-2 ${activeWindow === "search" && "font-bold"
+              }`}
             onClick={() => setActiveWindow("search")}
           >
             Search

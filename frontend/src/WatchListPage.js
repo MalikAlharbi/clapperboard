@@ -32,6 +32,8 @@ export default function WatchListPage() {
         setIsLoading(false);
     }, [isLoggedIn]);
 
+    useEffect(() => { document.title = 'Watchlist' }
+        , [])
     return (
         <div className="flex flex-col h-screen">
             {!isLoading && (

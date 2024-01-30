@@ -68,6 +68,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     retrieveProfile();
+    document.title = username
   }, []);
 
   async function errorHider() {

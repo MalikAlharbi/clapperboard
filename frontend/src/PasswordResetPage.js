@@ -31,6 +31,8 @@ export default function PasswordResetPage() {
         verifyPasswordResetLink();
     }, [uidb64, token]);
 
+    useEffect(() => { document.title = 'Password Reset' }, [])
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true)
