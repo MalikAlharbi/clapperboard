@@ -5,6 +5,7 @@ import { fetchInfo } from "./ShowsFetch";
 import { getUserShows } from "./ApiRequest";
 import Auth from "./components/Auth";
 import { AuthContext } from "./App";
+import Loading from "./components/Loading";
 
 export default function UserShowsPage() {
   const [showsJson, setShowsJson] = useState([]);
@@ -34,7 +35,7 @@ export default function UserShowsPage() {
 
   return (
     <div className="flex flex-col h-screen">
-      {!isLoading && (
+      {!isLoading ? (
         <>
           {!isLoggedIn ? (
             <Auth />
@@ -54,6 +55,10 @@ export default function UserShowsPage() {
             </div>
           )}
         </>
+      ) : (
+        <div className="flex justify-center items-center h-screen">
+          <Loading size={16} />
+        </div>
       )}
     </div>
   );

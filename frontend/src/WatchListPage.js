@@ -5,6 +5,7 @@ import { fetchInfo } from "./ShowsFetch";
 import { getUserWatchlist } from "./ApiRequest";
 import Auth from "./components/Auth";
 import { AuthContext } from "./App";
+import Loading from "./components/Loading";
 
 export default function WatchListPage() {
     const [showsJson, setShowsJson] = useState([]);
@@ -36,7 +37,7 @@ export default function WatchListPage() {
         , [])
     return (
         <div className="flex flex-col h-screen">
-            {!isLoading && (
+            {!isLoading ? (
                 <>
                     {!isLoggedIn ? (
                         <Auth />
@@ -56,6 +57,10 @@ export default function WatchListPage() {
                         </div>
                     )}
                 </>
+            ) : (
+                <div className="flex justify-center items-center h-screen">
+                    <Loading size={16} />
+                </div>
             )}
         </div>
     );
