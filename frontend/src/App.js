@@ -12,6 +12,8 @@ import NotFoundPage from "./NotFoundPage";
 import PasswordResetPage from "./PasswordResetPage"
 import WatchListPage from "./WatchListPage";
 import { is_authenticated, getUsername } from "./ApiRequest";
+import { FaGithub } from "react-icons/fa";
+import { GoReport } from "react-icons/go";
 
 export const AuthContext = createContext();
 
@@ -19,7 +21,8 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-
+  const [isGithubHovered, setIsGithubHovered] = useState(false);
+  const [isReportHovered, setIsReportHovered] = useState(false);
   useEffect(() => {
     async function check_authentication() {
       let response = await is_authenticated();
@@ -34,6 +37,31 @@ export default function App() {
     check_authentication();
   }, []);
 
+  const footer = () => {
+    return (
+      <div className="fixed top-0 right-0 text-gray-600 py-4 px-8">
+        <div className="flex items-center">
+          <a
+            href="https://github.com/MalikAlharbi/clapperboard"
+            className="p-3"
+            onMouseEnter={() => setIsGithubHovered(true)}
+            onMouseLeave={() => setIsGithubHovered(false)}
+          >
+            <FaGithub color={isGithubHovered ? "white" : "gray"} size={32} />
+          </a>
+          <a
+            href="mailto:clapperboard.m@gmail.com"
+            className="p-3"
+            onMouseEnter={() => setIsReportHovered(true)}
+            onMouseLeave={() => setIsReportHovered(false)}
+          >
+            <GoReport color={isReportHovered ? "yellow" : "gray"} size={32} />
+          </a>
+        </div>
+      </div>
+
+    )
+  }
   return (
     <BrowserRouter>
       {!isLoading && (
@@ -55,6 +83,8 @@ export default function App() {
               <Route path="*" element={<Navigate to="/404" />} />
             </Routes>
           </AuthContext.Provider>
+          {footer()}
+
         </>
       )}
     </BrowserRouter>
