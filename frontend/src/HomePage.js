@@ -40,7 +40,17 @@ export default function HomePage() {
   return (
     <div className="flex flex-col h-screen">
       <div className="w-screen h-screen flex flex-col items-center overflow-y-scroll">
-        <div className="text-red-500 text-3xl animate-pulse">HomePage</div>
+        <a
+          href="/"
+          className="flex items-center p-6 text-2xl font-semibold text-red-600"
+        >
+          <img
+            className="w-10 h-10 mr-2 invert"
+            src="static/images/favicon.ico"
+            alt="logo"
+          />
+          clapperboard
+        </a>
 
         <div className="text-3xl pt-5  ">
           {isLoggedIn && !loading && latestJson?.length > 0 && (

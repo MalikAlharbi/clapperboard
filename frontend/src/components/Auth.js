@@ -114,12 +114,12 @@ export default function Auth(props) {
         className="bg-gray-900 py-10 px-10 rounded-xl w-[370px] z-10"
       >
         <a
-          href="#"
+          href="/"
           className="flex items-center mb-6 text-2xl font-semibold text-red-600"
         >
           <img
             className="w-10 h-10 mr-2 invert"
-            src="static/images/clapperboard_logo.ico"
+            src="static/images/favicon.ico"
             alt="logo"
           />
           clapperboard
