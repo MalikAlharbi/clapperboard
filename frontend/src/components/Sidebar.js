@@ -7,14 +7,16 @@ import { SlScreenDesktop } from "react-icons/sl";
 import { FaUserFriends } from "react-icons/fa";
 import { IoBookmarks } from "react-icons/io5";
 
-import { signOut } from "../ApiRequest";
+import { signOut, showFriendReq } from "../ApiRequest";
 import Auth from "./Auth";
 import SidebarProfile from "./SidebarProfile";
 
 export default function Sidebar({ isLoggedIn, username }) {
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [authWindow, setAuthWindow] = useState(true);
+  const [friendRequests, setFriendRequests] = useState(0);
   const authRef = useRef(null);
+
 
   async function signOutHandler() {
     let signedOut = await signOut();
@@ -39,6 +41,17 @@ export default function Sidebar({ isLoggedIn, username }) {
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
   }, [authRef]);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      async function getFriendsReqCount() {
+        const requests = await showFriendReq();
+        setFriendRequests(requests.friendReq.length);
+
+      }
+      getFriendsReqCount();
+    }
+  }, [isLoggedIn])
 
   return (
     <div className="text-white fixed left-0 flex  h-full z-30">
@@ -122,6 +135,9 @@ export default function Sidebar({ isLoggedIn, username }) {
                     <span className="flex-1 ml-3 whitespace-nowrap">
                       Friends
                     </span>
+                    {friendRequests > 0 &&
+                      <span className="inline-flex items-center justify-center w-3 h-3 p-3 m-2  text-sm font-medium text-white rounded-sm bg-orange-400">{friendRequests}</span>
+                    }
                   </Link>
                 </li>
 

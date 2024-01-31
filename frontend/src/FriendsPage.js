@@ -22,7 +22,6 @@ export default function FriendsPage() {
     setActiveWindow("myFriends");
     setLoading(true);
     const friends = await showFriends();
-    console.log(friends);
     let friendList = [];
     for (let friend in friends) {
       friendList.push(friends[friend].user_2);
@@ -35,8 +34,6 @@ export default function FriendsPage() {
     setActiveWindow("friendRequests");
     setLoading(true);
     let requestsList = [];
-    console.log(friendRequests);
-    console.log(friendRequests.friendReq.length);
     for (let request of friendRequests.friendReq) {
       requestsList.push(request.from_user);
     }
