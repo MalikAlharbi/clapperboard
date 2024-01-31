@@ -2,7 +2,13 @@ import React from "react";
 import Loading from "./Loading";
 import ShowsCard from "./ShowsCard";
 
-export default function ItemList({ searched, isLoading, showsJson, isLoggedIn }) {
+export default function ItemList({
+  searched,
+  isLoading,
+  showsJson,
+  isLoggedIn,
+  username,
+}) {
   let filteredShows = [];
   if (searched) {
     filteredShows = showsJson.filter(
@@ -29,6 +35,7 @@ export default function ItemList({ searched, isLoading, showsJson, isLoggedIn })
             ))}
           </div>
         )
+
       ) : showsJson?.length > 0 && (
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
           {showsJson.map((show) => (
@@ -39,9 +46,11 @@ export default function ItemList({ searched, isLoading, showsJson, isLoggedIn })
               img={show["image"]["original"]}
               year={show["premiered"]}
               isLoggedIn={isLoggedIn}
+              username={username}
             />
           ))}
         </div>
+
       )}
       {searched && !isLoading && showsJson.length === 0 && (
         <p className="text-red-600 font-bold">NOT FOUND</p>

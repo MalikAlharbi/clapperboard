@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchEpisode, fetchInfo } from "../ShowsFetch";
+import { fetchEpisode, fetchImage } from "../ShowsFetch";
 import Loading from "./Loading";
 import { Carousel } from "flowbite-react";
 
@@ -14,18 +14,31 @@ export default function ShowsCarousel({ showsJson }) {
           if (element.modified_index > -1) {
             const data = await fetchEpisode(
               element.showId,
-              element.season,
+              element.apiSeason,
               element.modified_index + 1
             );
+            if (data?.image?.original == null) {
+              const imgUrl = await fetchImage(element.showId);
+              data.image = {
+                original: imgUrl,
+              }
+            }
             return data;
           } else {
             const list = element.watched_episodes.split(",");
             const last = list.lastIndexOf("true") + 1;
             const data = await fetchEpisode(
               element.showId,
-              element.season,
+              element.apiSeason,
               last
             );
+            if (data?.image?.original == null) {
+              const imgUrl = await fetchImage(element.showId);
+              console.log(imgUrl)
+              data.image = {
+                original: imgUrl,
+              }
+            }
             return data;
           }
         })

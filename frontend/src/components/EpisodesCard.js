@@ -8,40 +8,44 @@ export default function EpisodesCard({
   setTotalSavedEpisodes,
   clickerReset,
   seasons,
+  apiS,
 }) {
   const [savedEpisodes, setSavedEpisodes] = useState(tracker);
+  const [isMounted, setIsMounted] = useState(false);
+  const [apiSeason, setApiSeason] = useState(-1);
   const [dbIndex, setDbIndex] = useState(-1);
-
 
   const setTotal = async () => {
     setTotalSavedEpisodes((prevState) => {
       const newState = [...prevState];
-      newState[seasonCurrentIndex] = savedEpisodes[seasonCurrentIndex]?.filter(Boolean).length;
+      newState[seasonCurrentIndex] =
+        savedEpisodes[seasonCurrentIndex]?.filter(Boolean).length;
       return newState;
     });
   };
 
   useEffect(() => {
-    setTotal();
-  }, [savedEpisodes]);
+    if (isMounted) {
+      setTotal();
+      if (savedEpisodes)
+        postSavedEpisodes(
+          showId,
+          savedEpisodes[seasonCurrentIndex],
+          seasonCurrentIndex,
+          apiSeason,
+          dbIndex,
 
-  useEffect(() => {
-    setTotal();
-  }, []);
-
-  useEffect(() => {
-    if (savedEpisodes)
-      postSavedEpisodes(
-        showId,
-        savedEpisodes[seasonCurrentIndex],
-        seasonCurrentIndex,
-        dbIndex
-      );
+        );
+    }
   }, [savedEpisodes]);
 
   useEffect(() => {
     if (clickerReset != null) handleAllSave();
   }, [clickerReset]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   function handleUnknownSeasons(episode) {
     const seasonIndex = seasons.findIndex(function (item) {
@@ -52,6 +56,7 @@ export default function EpisodesCard({
 
   function handleUnknownSave(index, episode) {
     let epSeason = handleUnknownSeasons(episode);
+    setApiSeason(episode.season);
     let epIndex = 0;
     setSavedEpisodes((prevState) => {
       const newState = prevState.map((seasonEpisodes, seasonIndex) => {
@@ -59,6 +64,7 @@ export default function EpisodesCard({
           return seasonEpisodes.map((episodeSaved, episodeIndex) => {
             if (episodeIndex === index) {
               epIndex = !episodeSaved ? episodeIndex : -1;
+              setDbIndex(epIndex);
               return !episodeSaved; // toggle the saved state of the episode
             } else {
               return episodeSaved;
@@ -70,17 +76,18 @@ export default function EpisodesCard({
       });
       return newState;
     });
-    setDbIndex(epIndex);
   }
 
   function handleOneSave(index) {
     let epIndex = 0;
+    setApiSeason(seasonCurrentIndex + 1)
     setSavedEpisodes((prevState) => {
       const newState = prevState.map((seasonEpisodes, seasonIndex) => {
         if (seasonIndex === episodes[index].season - 1) {
           return seasonEpisodes.map((episodeSaved, episodeIndex) => {
             if (episodeIndex === index) {
               epIndex = !episodeSaved ? episodeIndex : -1;
+              setDbIndex(epIndex);
               return !episodeSaved; // toggle the saved state of the episode
             } else {
               return episodeSaved;
@@ -92,7 +99,6 @@ export default function EpisodesCard({
       });
       return newState;
     });
-    setDbIndex(epIndex);
   }
 
   function handleAllSave() {
@@ -113,17 +119,18 @@ export default function EpisodesCard({
     });
 
     setDbIndex(-1);
+    setApiSeason(apiS);
   }
 
   return (
-    <div className="max-w-[660px] max-h-[350px] md:max-h-[650px] overflow-y-auto scroll-smooth mx-auto">
+    <div className="max-w-[660px] max-h-[350px] md:max-h-[650px] overflow-y-auto scroll-smooth mx-auto" key={seasonCurrentIndex}>
       {episodes?.map((episode, index) => (
         <div key={episode.id} className="m-4">
           <div className="rounded-lg shadow-md overflow-hidden">
             <div className="p-2 flex flex-col sm:flex-row justify-between">
               <h2 className="text-l font-semibold text-white">
                 {/* circle for episodes */}
-                {seasons[0].number > 0 ? (
+                {seasons[0].number > 1 ? (
                   <button
                     className={`${savedEpisodes[handleUnknownSeasons(episode)][index]
                       ? "bg-green-500"
