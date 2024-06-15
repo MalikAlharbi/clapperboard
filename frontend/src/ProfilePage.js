@@ -11,7 +11,7 @@ import { fetchInfo } from "./ShowsFetch";
 import ItemList from "./components/ItemList";
 import Loading from "./components/Loading";
 import { AuthContext } from "./App";
-
+import Resizer from "react-image-file-resizer";
 
 export default function ProfilePage() {
   let navigate = useNavigate();
@@ -30,14 +30,44 @@ export default function ProfilePage() {
     fileInputRef.current.click();
   };
 
+   const resizeFile = (file) => {
+    return new Promise((resolve, reject) => {
+      Resizer.imageFileResizer(
+        file,
+        192,
+        192,
+        'JPEG',
+        100,
+        0,
+        (uri) => {
+          resolve(uri);
+
+        },
+        'base64',
+        192,
+        192
+      );
+    });
+  };
+
   const handleImageChange = async (event) => {
     const selectedFile = event.target.files[0];
-
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    let upload = await uploadImage(formData);
-    if (!upload) setError([true, upload.error]);
-    else setImage(URL.createObjectURL(selectedFile));
+    try {
+      const resizeImg = await resizeFile(selectedFile);
+      const blob = await fetch(resizeImg).then((res) => res.blob());
+      const formData = new FormData();
+      formData.append('file', blob, selectedFile.name);
+      let upload = await uploadImage(formData);
+      if (!upload) {
+        setError([true, upload.error]);
+      } else {
+        setImage(URL.createObjectURL(selectedFile));
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the resizing or upload process
+      console.error(error);
+      setError([true, 'An error occurred during image handling']);
+    }
   };
 
   const retrieveProfile = async () => {
@@ -61,7 +91,7 @@ export default function ProfilePage() {
 
     } catch (error) {
       setLoading(false);
-      navigate("http://127.0.0.1:8000/404");
+      navigate("/404");
     }
     setLoading(false);
   };

@@ -4,7 +4,7 @@ urlpatterns = [
     path('allusers', AllUsers.as_view()),
     path('user-shows/', UserShows.as_view()),
     path('watchlist/', getWatchlistShows, name='get_watchlist_shows'),
-
+    path('x',getWatchlistShows,name='x'),       
     path('user-episodes/', UserEpisodes.as_view()),
     path('top-shows', TopShows.as_view()),
     path('saveshow', UserShowUpdate.as_view()),
@@ -50,3 +50,4 @@ urlpatterns = [
          getWatchlistStatus, name='get_watchlist_status'),
 
 ]
+

@@ -20,7 +20,6 @@ export default function UsersList({ users }) {
       let dbImg = await getImg(currentUsername);
       //if user in search then we do not know whether users are friends or not//
       let isCurrentAfriend = await friendshipStatus(users[user]);
-      console.log(isCurrentAfriend);
       let userObject = {
         username: currentUsername,
         current_status: profileData.current_status,
@@ -34,7 +33,6 @@ export default function UsersList({ users }) {
 
   async function handleAdd(username) {
     const sendFriendReq = await sendFriendRequest(username);
-    console.log(sendFriendReq);
     if (sendFriendReq.success) {
       const updatedList = [...usersList];
       const index = updatedList.findIndex(
@@ -50,7 +48,6 @@ export default function UsersList({ users }) {
 
   async function handleAccept(username, decision) {
     const reqDecision = await friendReqDecision(username, decision);
-    console.log(reqDecision);
     if (reqDecision.success) {
       const updatedList = [...usersList];
       const index = updatedList.findIndex(
@@ -89,10 +86,6 @@ export default function UsersList({ users }) {
   useEffect(() => {
     retriveProfiles();
   }, []);
-
-  useEffect(() => {
-    console.log("profiles: ", usersList);
-  }, [usersList]);
 
   return (
     <section>

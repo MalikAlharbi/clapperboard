@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "App.js",
   "scripts": {
     "dev": "webpack --mode development --watch",
     "build": "webpack --mode production"
@@ -16,7 +16,7 @@
     "@babel/preset-env": "^7.22.5",
     "@babel/preset-react": "^7.22.5",
     "autoprefixer": "^10.4.14",
-    "babel-loader": "^9.1.2",
+    "babel-loader": "^8.0.4",
     "css-loader": "^6.8.1",
     "html-webpack-plugin": "^5.5.3",
     "postcss": "^8.4.24",
@@ -41,6 +41,7 @@
     "flowbite-react": "^0.5.0",
     "react-feather": "^2.0.10",
     "react-icons": "^4.10.1",
+    "react-image-file-resizer": "^0.4.8",
     "react-lazy-load": "^4.0.1",
     "react-lazy-load-image-component": "^1.6.0"
   },

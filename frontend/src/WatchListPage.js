@@ -15,7 +15,6 @@ export default function WatchListPage() {
 
     async function getShows() {
         let dbShows = await getUserWatchlist();
-        console.log(dbShows);
         let shows = await Promise.all(
             dbShows.map((show) => {
                 return fetchInfo(show);

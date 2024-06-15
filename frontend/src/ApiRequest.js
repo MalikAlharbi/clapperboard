@@ -110,7 +110,6 @@ export const latestEpisodes = async () => {
     },
   });
   const data = await response.json();
-  console.log(data);
   return data;
 };
 
@@ -150,7 +149,6 @@ export const getUserWatchlist = async () => {
     },
   });
   const data = await response.json();
-  console.log(data);
   return data.watchlist;
 };
 
