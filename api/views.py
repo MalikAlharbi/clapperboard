@@ -62,8 +62,8 @@ class UserShows(generics.ListAPIView):
 
     def get_queryset(self):
         user_id = self.request.user
-        queryset = UserShow.objects.filter(
-            user=user_id).values('showId').distinct()
+        subquery = UserShow.objects.filter(user=user_id).values('showId').annotate(max_modified=Max('modified_at'))
+        queryset = UserShow.objects.filter(user=user_id, modified_at__in=subquery.values('max_modified')).order_by('-modified_at')
         return queryset
 
 
