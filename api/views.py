@@ -63,7 +63,7 @@ class UserShows(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.request.user
         queryset = UserShow.objects.filter(
-            user=user_id).values('showId').distinct()
+            user=user_id).values('showId').distinct().order_by('-modified_at')
         return queryset
 
 
