@@ -98,7 +98,7 @@ export default function UsersList({ users }) {
                 src={
                   profile.userImg
                     ? profile.userImg
-                    : "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
+                    : "media/users/Default_pfp.png"
                 }
                 alt="Upload Image"
               />
