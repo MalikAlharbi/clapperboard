@@ -10,21 +10,19 @@ export default function SidebarProfile({ username }) {
     fileInputRef.current.click();
   };
 
-  
   const resizeFile = (file) => {
     return new Promise((resolve, reject) => {
       Resizer.imageFileResizer(
         file,
         192,
         192,
-        'JPEG',
+        "JPEG",
         100,
         0,
         (uri) => {
           resolve(uri);
-
         },
-        'base64',
+        "base64",
         192,
         192
       );
@@ -37,7 +35,7 @@ export default function SidebarProfile({ username }) {
       const resizeImg = await resizeFile(selectedFile);
       const blob = await fetch(resizeImg).then((res) => res.blob());
       const formData = new FormData();
-      formData.append('file', blob, selectedFile.name);
+      formData.append("file", blob, selectedFile.name);
       let upload = await uploadImage(formData);
       if (!upload) {
         setError([true, upload.error]);
@@ -47,10 +45,9 @@ export default function SidebarProfile({ username }) {
     } catch (error) {
       // Handle any errors that occurred during the resizing or upload process
       console.error(error);
-      setError([true, 'An error occurred during image handling']);
+      setError([true, "An error occurred during image handling"]);
     }
   };
-
 
   const retriveProfile = async () => {
     let dbImg = await getImg(username);
@@ -101,7 +98,7 @@ export default function SidebarProfile({ username }) {
           ) : (
             <img
               className="rounded-full w-20 h-20 mb-2"
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
+              src="media/users/Default_pfp.png"
               onClick={handleImageUpload}
               style={{ cursor: "pointer" }}
               alt="Upload Image"
