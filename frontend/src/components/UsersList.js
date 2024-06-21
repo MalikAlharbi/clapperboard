@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import Loading from "./Loading";
-
 import {
   getUsernameById,
   getProfileData,
@@ -11,48 +8,31 @@ import {
   sendFriendRequest,
   friendReqDecision,
 } from "../ApiRequest";
+import Loading from "./Loading";
 
 export default function UsersList({ users }) {
   const [usersList, setUsersList] = useState([]);
-  const [loading, setIsLoading] = useState(true); // Object to store individual loading states
-
-  const [userImagesLoading, setUserImagesLoading] = useState({}); // Object to store individual loading states
-
+  const [userListLoading, setUserListLoading] = useState(true);
   async function retriveProfiles() {
+    setUserListLoading(true);
     let usersList = [];
-
     for (let user in users) {
       const currentUsername = await getUsernameById(users[user]);
       let profileData = await getProfileData(currentUsername);
       let dbImg = await getImg(currentUsername);
-      if (dbImg) {
-        setUserImagesLoading({ ...userImagesLoading, [currentUsername]: true }); // Initialize loading state for user
-
-        const image = new Image();
-        image.src = dbImg;
-        image.onload = () => {
-          setUserImagesLoading({
-            ...userImagesLoading,
-            [currentUsername]: false,
-          }); // Update specific image state
-        };
-      } else {
-        setUserImagesLoading({
-          ...userImagesLoading,
-          [currentUsername]: false,
-        }); // No image, set loading to false
-      }
-
+      //if user in search then we do not know whether users are friends or not//
+      let isCurrentAfriend = await friendshipStatus(users[user]);
       let userObject = {
         username: currentUsername,
         current_status: profileData.current_status,
         userImg: dbImg || null,
-        friendshipStatus: await friendshipStatus(users[user]),
+        friendshipStatus: isCurrentAfriend,
       };
       usersList.push(userObject);
     }
     setUsersList(usersList);
-    setIsLoading(false);
+
+    setUserListLoading(false);
   }
 
   async function handleAdd(username) {
@@ -113,36 +93,20 @@ export default function UsersList({ users }) {
 
   return (
     <section>
-      {loading ? (
-        <Loading />
-      ) : (
+      {!userListLoading ? (
         usersList.map((profile, index) => (
           <>
             <div className="flex flex-row p-2" key={profile.userId}>
               <a href={`/profile/${profile.username}`}>
-                {userImagesLoading[profile.username] ? (
-                  <div className="animate-pulse bg-gray-600 h-[128px] w-[128px] mr-2 rounded-t-lg flex items-center justify-center">
-                    <svg
-                      className="w-[32px] h-[32px] mr-2 text-gray-200 dark:text-gray-200"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      viewBox="0 0 20 18"
-                    >
-                      <path d="M18 0H2a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2Zm-5.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3Zm4.376 10.481A1 1 0 0 1 16 15H4a1 1 0 0 1-.895-1.447l3.5-7A1 1 0 0 1 7.468 6a.965.965 0 0 1 .9.5l2.775 4.757 1.546-1.887a1 1 0 0 1 1.618.1l2.541 4a1 1 0 0 1 .028 1.011Z" />
-                    </svg>
-                  </div>
-                ) : (
-                  <LazyLoadImage
-                    className=" w-32 h-32 mr-2"
-                    src={
-                      profile.userImg
-                        ? profile.userImg
-                        : "media/users/Default_pfp.png"
-                    }
-                    alt="Upload Image"
-                  />
-                )}
+                <img
+                  className=" w-32 h-32 mr-2"
+                  src={
+                    profile.userImg
+                      ? profile.userImg
+                      : "media/users/Default_pfp.png"
+                  }
+                  alt="Upload Image"
+                />
               </a>
               <div className="flex flex-col gap-4">
                 <a
@@ -208,6 +172,8 @@ export default function UsersList({ users }) {
             )}
           </>
         ))
+      ) : (
+        <Loading />
       )}
     </section>
   );
