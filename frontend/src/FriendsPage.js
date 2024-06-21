@@ -98,44 +98,45 @@ export default function FriendsPage() {
           {activeWindow === "friendRequests" && (
             <UsersList users={users} isFriend={false} />
           )}
-          {activeWindow === "search" && (
-            <div className="flex flex-col h-screen">
-              <div class="w-screen h-screen flex flex-col items-center overflow-y-scroll">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  placeholder="Search for friends..."
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      handleSearch();
-                    }
-                  }}
-                  className="border px-10 py-4 text-white rounded-full bg-transparent m-5"
-                />
-                <button
-                  className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded "
-                  onClick={handleSearch}
-                >
-                  Search
-                </button>
-                {searched && (
-                  <>
-                    {error[0] ? (
-                      <p className="text-red-600 font-bold flex justify-center">
-                        {error[1]}
-                      </p>
-                    ) : (
-                      <UsersList users={users} />
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-          )}
         </>
       ) : (
         <Loading />
+      )}
+
+      {!loading && activeWindow === "search" && (
+        <div className="flex flex-col h-screen">
+          <div class="w-screen h-screen flex flex-col items-center overflow-y-scroll">
+            <input
+              type="text"
+              value={searchQuery}
+              placeholder="Search for friends..."
+              onChange={(event) => setSearchQuery(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  handleSearch();
+                }
+              }}
+              className="border px-10 py-4 text-white rounded-full bg-transparent m-5"
+            />
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded mb-2 "
+              onClick={handleSearch}
+            >
+              Search
+            </button>
+            {searched && (
+              <>
+                {error[0] ? (
+                  <p className="text-red-600 font-bold flex justify-center">
+                    {error[1]}
+                  </p>
+                ) : (
+                  <UsersList users={users} />
+                )}
+              </>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
