@@ -8,12 +8,14 @@ import {
   sendFriendRequest,
   friendReqDecision,
 } from "../ApiRequest";
+import Loading from "./Loading";
 
 export default function UsersList({ users }) {
   const [usersList, setUsersList] = useState([]);
+  const [userListLoading, setUserListLoading] = useState(true);
   async function retriveProfiles() {
+    setUserListLoading(true);
     let usersList = [];
-
     for (let user in users) {
       const currentUsername = await getUsernameById(users[user]);
       let profileData = await getProfileData(currentUsername);
@@ -29,6 +31,8 @@ export default function UsersList({ users }) {
       usersList.push(userObject);
     }
     setUsersList(usersList);
+
+    setUserListLoading(false);
   }
 
   async function handleAdd(username) {
@@ -89,84 +93,88 @@ export default function UsersList({ users }) {
 
   return (
     <section>
-      {usersList.map((profile, index) => (
-        <>
-          <div className="flex flex-row p-2" key={profile.userId}>
-            <a href={`/profile/${profile.username}`}>
-              <img
-                className=" w-32 h-32 mr-2"
-                src={
-                  profile.userImg
-                    ? profile.userImg
-                    : "media/users/Default_pfp.png"
-                }
-                alt="Upload Image"
-              />
-            </a>
-            <div className="flex flex-col gap-4">
-              <a
-                href={`/profile/${profile.username}`}
-                className="text-blue-700"
-              >
-                {profile.username}
+      {!userListLoading ? (
+        usersList.map((profile, index) => (
+          <>
+            <div className="flex flex-row p-2" key={profile.userId}>
+              <a href={`/profile/${profile.username}`}>
+                <img
+                  className=" w-32 h-32 mr-2"
+                  src={
+                    profile.userImg
+                      ? profile.userImg
+                      : "media/users/Default_pfp.png"
+                  }
+                  alt="Upload Image"
+                />
               </a>
-
-              <p>
-                {profile.current_status === "Online" ? (
-                  <span className="text-green-500">
-                    {profile.current_status}
-                  </span>
-                ) : (
-                  <>
-                    <span className="text-red-500">Offline </span>
-                    <span className="text-gray-600 text-sm italic">
-                      (last appearance: {profile.current_status})
-                    </span>
-                  </>
-                )}
-              </p>
-
-              {profile.friendshipStatus === "Friend" ? (
-                <button
-                  className="rounded-sm w-[250px] font-mono py-2 px-4 text-white bg-red-700 hover:bg-red-500"
-                  onClick={() => handleDelete(profile.username)}
+              <div className="flex flex-col gap-4">
+                <a
+                  href={`/profile/${profile.username}`}
+                  className="text-blue-700"
                 >
-                  Delete Friend
-                </button>
-              ) : profile.friendshipStatus === "Pending_sender" ? (
-                <button className="rounded-sm w-[250px] font-mono py-2 px-4 text-white bg-gray-700 hover:bg-gray-500 cursor-default">
-                  Pending
-                </button>
-              ) : profile.friendshipStatus === "Pending_receiver" ? (
-                <div className="flex">
-                  <button
-                    className="rounded-sm w-[250px] font-mono py-2 px-4 text-white bg-green-700 hover:bg-green-500 mr-1"
-                    onClick={() => handleAccept(profile.username, true)}
-                  >
-                    Accept friendship
-                  </button>
+                  {profile.username}
+                </a>
+
+                <p>
+                  {profile.current_status === "Online" ? (
+                    <span className="text-green-500">
+                      {profile.current_status}
+                    </span>
+                  ) : (
+                    <>
+                      <span className="text-red-500">Offline </span>
+                      <span className="text-gray-600 text-sm italic">
+                        (last appearance: {profile.current_status})
+                      </span>
+                    </>
+                  )}
+                </p>
+
+                {profile.friendshipStatus === "Friend" ? (
                   <button
                     className="rounded-sm w-[250px] font-mono py-2 px-4 text-white bg-red-700 hover:bg-red-500"
-                    onClick={() => handleAccept(profile.username, false)}
+                    onClick={() => handleDelete(profile.username)}
                   >
-                    Decline friendship
+                    Delete Friend
                   </button>
-                </div>
-              ) : (
-                <button
-                  className="rounded-sm w-[250px] font-mono py-2 px-4 text-white bg-blue-700 hover:bg-blue-500"
-                  onClick={() => handleAdd(profile.username)}
-                >
-                  Add Friend
-                </button>
-              )}
+                ) : profile.friendshipStatus === "Pending_sender" ? (
+                  <button className="rounded-sm w-[250px] font-mono py-2 px-4 text-white bg-gray-700 hover:bg-gray-500 cursor-default">
+                    Pending
+                  </button>
+                ) : profile.friendshipStatus === "Pending_receiver" ? (
+                  <div className="flex">
+                    <button
+                      className="rounded-sm w-[250px] font-mono py-2 px-4 text-white bg-green-700 hover:bg-green-500 mr-1"
+                      onClick={() => handleAccept(profile.username, true)}
+                    >
+                      Accept friendship
+                    </button>
+                    <button
+                      className="rounded-sm w-[250px] font-mono py-2 px-4 text-white bg-red-700 hover:bg-red-500"
+                      onClick={() => handleAccept(profile.username, false)}
+                    >
+                      Decline friendship
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    className="rounded-sm w-[250px] font-mono py-2 px-4 text-white bg-blue-700 hover:bg-blue-500"
+                    onClick={() => handleAdd(profile.username)}
+                  >
+                    Add Friend
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-          {index != usersList.length - 1 && (
-            <hr class="h-px my-2 bg-gray-200 border-0 " />
-          )}
-        </>
-      ))}
+            {index != usersList.length - 1 && (
+              <hr class="h-px my-2 bg-gray-200 border-0 " />
+            )}
+          </>
+        ))
+      ) : (
+        <Loading />
+      )}
     </section>
   );
 }
