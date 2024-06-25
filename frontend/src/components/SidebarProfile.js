@@ -98,7 +98,7 @@ export default function SidebarProfile({ username }) {
           ) : (
             <img
               className="rounded-full w-20 h-20 mb-2"
-              src="media/users/Default_pfp.png"
+              src="https://clapperboard-storage-m.s3.eu-north-1.amazonaws.com/users/Default_pfp.png"
               onClick={handleImageUpload}
               style={{ cursor: "pointer" }}
               alt="Upload Image"

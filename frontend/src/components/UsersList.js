@@ -103,7 +103,7 @@ export default function UsersList({ users }) {
                   src={
                     profile.userImg
                       ? profile.userImg
-                      : "media/users/Default_pfp.png"
+                      : "https://clapperboard-storage-m.s3.eu-north-1.amazonaws.com/users/Default_pfp.png"
                   }
                   alt="Upload Image"
                 />

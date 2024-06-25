@@ -143,7 +143,7 @@ export default function ProfilePage() {
               ) : (
                 <img
                   className="rounded-full w-40 h-40"
-                  src="media/users/Default_pfp.png"
+                  src="https://clapperboard-storage-m.s3.eu-north-1.amazonaws.com/users/Default_pfp.png"
                   onClick={handleImageUpload}
                   style={{ cursor: isOwner ? "pointer" : "default" }}
                   alt="Upload Image"
