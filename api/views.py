@@ -46,7 +46,7 @@ from django.http import JsonResponse
 
 
 def custom_404(request, exception):
-    return redirect("http://127.0.0.1:8000/404")
+    return redirect("/404")
 
 
 class AllUsers(generics.ListAPIView):
@@ -62,8 +62,8 @@ class UserShows(generics.ListAPIView):
 
     def get_queryset(self):
         user_id = self.request.user
-        queryset = UserShow.objects.filter(
-            user=user_id).values('showId').distinct()
+        subquery = UserShow.objects.filter(user=user_id).values('showId').annotate(max_modified=Max('modified_at'))
+        queryset = UserShow.objects.filter(user=user_id, modified_at__in=subquery.values('max_modified')).order_by('-modified_at')
         return queryset
 
 
@@ -251,8 +251,8 @@ def verify_password(request, uidb64, token):
         user = None
 
     if user and default_token_generator.check_token(user, token):
-        return redirect(f"http://127.0.0.1:8000/password_reset/{uidb64}/{token}", status=200)
-    return redirect("http://127.0.0.1:8000/404", status=404)
+        return redirect(f"/password_reset/{uidb64}/{token}", status=200)
+    return redirect("/404", status=404)
 
 
 def verify_link(request, uidb64, token):
@@ -290,7 +290,7 @@ def reset_password(request):
             else:
                 return JsonResponse({"success": False, 'error': passwordCheck})
 
-    return redirect("http://127.0.0.1:8000/404", status=404)
+    return redirect("/404", status=404)
 
 
 def verify_email(request, uidb64, token):
@@ -305,9 +305,9 @@ def verify_email(request, uidb64, token):
         user.save()
         login(request, user)
         # redirect to activation success page
-        return redirect("http://127.0.0.1:8000/activation", status=200)
+        return redirect("/activation", status=200)
     # redirect to 404 page
-    return redirect("http://127.0.0.1:8000/404", status=404)
+    return redirect("/404", status=404)
 
 
 def checkPassword(password):
@@ -646,4 +646,4 @@ def getWatchlistShows(request):
             return JsonResponse({'success': False, 'watchlist': []})
     return JsonResponse({'success': False, 'message': 'Invalid request method.'})
 
-# TODO create a new model for favorute and watchlist
+

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { signIn, signUp, forgotPassword } from "../ApiRequest";
 import { MdMarkEmailUnread, MdMarkEmailRead } from "react-icons/md";
 import Loading from "./Loading";
-//finished, make activion page now.
+import { GiClapperboard } from "react-icons/gi";
 export default function Auth(props) {
   const { authRef } = props;
   const [login, setIsLogin] = useState(true);
@@ -40,7 +40,7 @@ export default function Auth(props) {
     else
       return (
         <p className="inline-flex bg-blue-600 items-center justify-center w-full py-2 rounded-full text-xl text-center text-white font-montserrat">
-          <Loading color={"green-500"} />
+          <Loading color={"green"} />
         </p>
       );
   };
@@ -113,16 +113,14 @@ export default function Auth(props) {
         ref={authRef}
         className="bg-gray-900 py-10 px-10 rounded-xl w-[370px] z-10"
       >
-        <a
+           <a
           href="/"
-          className="flex items-center mb-6 text-2xl font-semibold text-red-600"
+          className="flex items-center p-6 "
         >
-          <img
-            className="w-10 h-10 mr-2 invert"
-            src="static/images/favicon.ico"
-            alt="logo"
-          />
+            <GiClapperboard size={35} color="white" />
+          <span className="text-2xl ml-2 font-semibold text-red-600">
           clapperboard
+          </span>
         </a>
         {error && <p className="text-sm font-bold text-red-600">{error}</p>}
 

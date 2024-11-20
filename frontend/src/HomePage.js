@@ -4,6 +4,7 @@ import ShowsCarousel from "./components/ShowsCarousel";
 import { latestEpisodes, topShows } from "./ApiRequest";
 import { fetchInfo } from "./ShowsFetch";
 import ItemList from "./components/ItemList";
+import { GiClapperboard } from "react-icons/gi";
 
 export default function HomePage() {
   const { isLoggedIn } = useContext(AuthContext);
@@ -40,18 +41,15 @@ export default function HomePage() {
   return (
     <div className="flex flex-col h-screen">
       <div className="w-screen h-screen flex flex-col items-center overflow-y-scroll">
-        <a
+     <a
           href="/"
-          className="flex items-center p-6 text-2xl font-semibold text-red-600"
+          className="flex items-center p-6 "
         >
-          <img
-            className="w-10 h-10 mr-2 invert"
-            src="static/images/favicon.ico"
-            alt="logo"
-          />
+            <GiClapperboard size={35} color="white" />
+          <span className="text-2xl ml-2 font-semibold text-red-600">
           clapperboard
+          </span>
         </a>
-
         <div className="text-3xl pt-5  ">
           {isLoggedIn && !loading && latestJson?.length > 0 && (
             <div className="mb-10">
@@ -69,7 +67,7 @@ export default function HomePage() {
           )}
           <span className="text-red-500 font-mono mt-5">Top 3 </span>{" "}
           <span className="text-white font-mono">
-            most watched shows this week
+            most watched shows in clapperboard
           </span>
         </div>
         <div className="mx-auto mt-6">

@@ -11,7 +11,7 @@ import { fetchInfo } from "./ShowsFetch";
 import ItemList from "./components/ItemList";
 import Loading from "./components/Loading";
 import { AuthContext } from "./App";
-
+import Resizer from "react-image-file-resizer";
 
 export default function ProfilePage() {
   let navigate = useNavigate();
@@ -30,14 +30,43 @@ export default function ProfilePage() {
     fileInputRef.current.click();
   };
 
+  const resizeFile = (file) => {
+    return new Promise((resolve, reject) => {
+      Resizer.imageFileResizer(
+        file,
+        192,
+        192,
+        "JPEG",
+        100,
+        0,
+        (uri) => {
+          resolve(uri);
+        },
+        "base64",
+        192,
+        192
+      );
+    });
+  };
+
   const handleImageChange = async (event) => {
     const selectedFile = event.target.files[0];
-
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    let upload = await uploadImage(formData);
-    if (!upload) setError([true, upload.error]);
-    else setImage(URL.createObjectURL(selectedFile));
+    try {
+      const resizeImg = await resizeFile(selectedFile);
+      const blob = await fetch(resizeImg).then((res) => res.blob());
+      const formData = new FormData();
+      formData.append("file", blob, selectedFile.name);
+      let upload = await uploadImage(formData);
+      if (!upload) {
+        setError([true, upload.error]);
+      } else {
+        setImage(URL.createObjectURL(selectedFile));
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the resizing or upload process
+      console.error(error);
+      setError([true, "An error occurred during image handling"]);
+    }
   };
 
   const retrieveProfile = async () => {
@@ -58,17 +87,16 @@ export default function ProfilePage() {
       setCurrentStatus(profileData.current_status);
       let dbImg = await getImg(username);
       if (dbImg) setImage(dbImg);
-
     } catch (error) {
       setLoading(false);
-      navigate("http://127.0.0.1:8000/404");
+      navigate("/404");
     }
     setLoading(false);
   };
 
   useEffect(() => {
     retrieveProfile();
-    document.title = username
+    document.title = username;
   }, []);
 
   async function errorHider() {
@@ -92,8 +120,6 @@ export default function ProfilePage() {
         </div>
       )}
       {!loading ? (
-
-
         <div className="flex flex-col items-center mt-10">
           <div className="flex flex-row mb-10">
             <>
@@ -117,7 +143,7 @@ export default function ProfilePage() {
               ) : (
                 <img
                   className="rounded-full w-40 h-40"
-                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
+                  src="https://clapperboard-storage-m.s3.eu-north-1.amazonaws.com/users/Default_pfp.png"
                   onClick={handleImageUpload}
                   style={{ cursor: isOwner ? "pointer" : "default" }}
                   alt="Upload Image"
@@ -155,12 +181,11 @@ export default function ProfilePage() {
             username={username}
           />
         </div>
-      )
-        : (
-          <div className="flex justify-center items-center h-screen">
-            <Loading size={16} />
-          </div>
-        )}
+      ) : (
+        <div className="flex justify-center items-center h-screen">
+          <Loading size={16} />
+        </div>
+      )}
     </>
   );
 }

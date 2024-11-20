@@ -4,7 +4,7 @@ urlpatterns = [
     path('allusers', AllUsers.as_view()),
     path('user-shows/', UserShows.as_view()),
     path('watchlist/', getWatchlistShows, name='get_watchlist_shows'),
-
+    path('x',getWatchlistShows,name='x'),       
     path('user-episodes/', UserEpisodes.as_view()),
     path('top-shows', TopShows.as_view()),
     path('saveshow', UserShowUpdate.as_view()),
@@ -24,12 +24,12 @@ urlpatterns = [
     path('is-authenticated', is_authenticated, name='is_authenticated'),
     path('signout', signOut, name='signout'),
     path('upload', upload_image, name='upload'),
-    path('getImg/<username>/', getImg, name='getImg'),
+    path('getImg/<username>', getImg, name='getImg'),
     path('getUsername', getUsername, name='getUsername'),
     path('getUsernameById/<int:userid>',
          getUsernameById, name='getUsernameById'),
-    path('getProfileData/<username>/', getProfileData, name='getProfileData'),
-    path('getProfileShows/<username>/', getProfileShows, name='getProfileShows'),
+    path('getProfileData/<username>', getProfileData, name='getProfileData'),
+    path('getProfileShows/<username>', getProfileShows, name='getProfileShows'),
     path('getProfileEpisodes/show_id=<int:show_id>/username=<str:username>/',
          getProfileEpisodes, name='getProfileEpisodes'),
     path('showFriends', showFriends, name='showFriends'),
@@ -50,3 +50,4 @@ urlpatterns = [
          getWatchlistStatus, name='get_watchlist_status'),
 
 ]
+

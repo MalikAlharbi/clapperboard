@@ -21,7 +21,7 @@ export default function PasswordResetPage() {
                     setIsValidLink(true);
                 else {
                     setIsValidLink(false);
-                    navigate("http://127.0.0.1:8000/404");
+                    navigate("/404");
                 }
             } catch (error) {
                 setError(error);
@@ -101,7 +101,7 @@ export default function PasswordResetPage() {
                             </button>
                         ) : (
                             <p className="inline-flex bg-blue-600 items-center justify-center w-full py-2 rounded-full text-xl text-center text-white font-montserrat">
-                                <Loading color={"green-500"} />
+                                <Loading color={"green"} />
                             </p>
                         )}
                     </form>

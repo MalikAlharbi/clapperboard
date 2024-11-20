@@ -34,7 +34,6 @@ export default function ShowsCarousel({ showsJson }) {
             );
             if (data?.image?.original == null) {
               const imgUrl = await fetchImage(element.showId);
-              console.log(imgUrl)
               data.image = {
                 original: imgUrl,
               }

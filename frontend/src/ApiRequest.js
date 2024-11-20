@@ -69,8 +69,7 @@ export const signUp = async (username, email, password, rememberMe) => {
 };
 
 export const forgotPassword = async (email) => {
-  if (!email)
-    throw new Error("Missing email");
+  if (!email) throw new Error("Missing email");
   const csrftoken = getCookie("csrftoken");
   const response = await fetch(`/api/password_reset`, {
     method: "POST",
@@ -110,7 +109,6 @@ export const latestEpisodes = async () => {
     },
   });
   const data = await response.json();
-  console.log(data);
   return data;
 };
 
@@ -150,7 +148,6 @@ export const getUserWatchlist = async () => {
     },
   });
   const data = await response.json();
-  console.log(data);
   return data.watchlist;
 };
 
@@ -399,10 +396,9 @@ export const searchForUser = async (username) => {
   return data;
 };
 
-
 export const verify_link = async (uidb64, token) => {
   const csrftoken = getCookie("csrftoken");
-  const response = await fetch(`/api/verify-link/${uidb64}/${token}`, {
+  const response = await fetch(`/api/verify-link/${uidb64}/${token}/`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -426,7 +422,6 @@ export const reset_password = async (uidb64, token, password) => {
       uidb64: uidb64,
       token: token,
       password: password,
-
     }),
   });
   const data = await response.json();
@@ -495,5 +490,4 @@ export default [
   getWatchlistStatus,
   postfavorite,
   postwatchlist,
-
 ];

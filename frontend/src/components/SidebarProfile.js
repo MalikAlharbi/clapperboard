@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { uploadImage, getImg } from "../ApiRequest";
-
+import Resizer from "react-image-file-resizer";
 export default function SidebarProfile({ username }) {
   const fileInputRef = useRef(null);
   const [loading, setLoading] = useState(true);
@@ -10,14 +10,43 @@ export default function SidebarProfile({ username }) {
     fileInputRef.current.click();
   };
 
+  const resizeFile = (file) => {
+    return new Promise((resolve, reject) => {
+      Resizer.imageFileResizer(
+        file,
+        192,
+        192,
+        "JPEG",
+        100,
+        0,
+        (uri) => {
+          resolve(uri);
+        },
+        "base64",
+        192,
+        192
+      );
+    });
+  };
+
   const handleImageChange = async (event) => {
     const selectedFile = event.target.files[0];
-
-    const formData = new FormData();
-    formData.append("file", selectedFile);
-    let upload = await uploadImage(formData);
-    if (!upload) setError([true, upload.error]);
-    else setImage(URL.createObjectURL(selectedFile));
+    try {
+      const resizeImg = await resizeFile(selectedFile);
+      const blob = await fetch(resizeImg).then((res) => res.blob());
+      const formData = new FormData();
+      formData.append("file", blob, selectedFile.name);
+      let upload = await uploadImage(formData);
+      if (!upload) {
+        setError([true, upload.error]);
+      } else {
+        setImage(URL.createObjectURL(selectedFile));
+      }
+    } catch (error) {
+      // Handle any errors that occurred during the resizing or upload process
+      console.error(error);
+      setError([true, "An error occurred during image handling"]);
+    }
   };
 
   const retriveProfile = async () => {
@@ -69,7 +98,7 @@ export default function SidebarProfile({ username }) {
           ) : (
             <img
               className="rounded-full w-20 h-20 mb-2"
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
+              src="https://clapperboard-storage-m.s3.eu-north-1.amazonaws.com/users/Default_pfp.png"
               onClick={handleImageUpload}
               style={{ cursor: "pointer" }}
               alt="Upload Image"
