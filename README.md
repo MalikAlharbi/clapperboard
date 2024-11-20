@@ -1,55 +1,40 @@
-## Before Starting
+# Clapperboard 🎬
 
-This project is using django framework as a backend, and using react & tailwindcss as frontend.
-Project bundle via webpack & babel-loader
+Clapperboard is a website for TV show enthusiasts to track their episode progress, connect with friends, and share their viewing habits. Stay updated on your favorite shows, discover new series, and connect with friends.
 
-### `pip install Django`
+## 🚀 Features
 
-### `pip install djangorestframework`
+- **Track Progress**: Keep a detailed log of episodes watched across various TV shows.
+- **Social Connectivity**: Follow friends and see what they’re watching.
+- **Community Engagement**: Share reviews and recommendations.
+- **Customizable Dashboards**: Organize and prioritize your favorite shows.
+- **Discover New Shows**: Explore trending and recommended series.
 
+## 🌐 Live Website
 
-### `npm install`
+Access the app live at [Clapperboard Tracker](https://clapperboardtracker.com).
 
-### `npm install react react-dom`
+## 📋 How to Use
 
-### `npm install tailwindcss postcss autoprefixer babel-loader @babel/core @babel/preset-env webpack webpack-cli webpack-dev-server html-webpack-plugin css-loader style-loader postcss-loader postcss-import -D`
+1. **Sign Up**: Create an account to start tracking your shows.
+2. **Add Shows**: Search for your favorite TV series and add them to your list.
+3. **Mark Episodes**: Track your viewing progress episode by episode.
+4. **Follow Friends**: See what your friends are watching and join the discussion.
+5. **Discover**: Find new shows tailored to your preferences.
 
+## 🛠️ Tech Stack
 
+- **Frontend**: React + Tailwind CSS
+- **Backend**: Django REST Framework (DRF)
+- **Database**: SQLite
+- **Hosting**: AWS EC2 instance
+- **Storage**: AWS S3
+- **Web Server**: Nginx
 
+## 💡 Suggestions & Contributions
 
-## Available Scripts
+We love feedback and suggestions! If you have ideas to make Clapperboard better, feel free to open an issue or submit a pull request. Whether it's a feature request or a bug fix, your contributions are always welcome. Together, we can make Clapperboard the go-to platform for TV show tracking.
 
-In the project directory, you can run:
+---
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+🎉 **Start tracking your TV journey today with Clapperboard!** 🎥
