@@ -1,12 +1,12 @@
 # Clapperboard 🎬
 
-Clapperboard is a website for TV show enthusiasts to track their episode progress, connect with friends, and share their viewing habits. Stay updated on your favorite shows, discover new series, and connect with friends.
+Clapperboard is a website for TV show enthusiasts to track their episode progress, connect with friends, and share their viewing habits. Stay updated on your favorite shows, discover new series, and connect with friends!
 
 ## 🚀 Features
 
 - **Track Progress**: Keep a detailed log of episodes watched across various TV shows.
+- **Save to Watchlist**: Save shows you find interesting for later.
 - **Social Connectivity**: Follow friends and see what they’re watching.
-- **Community Engagement**: Share reviews and recommendations.
 - **Customizable Dashboards**: Organize and prioritize your favorite shows.
 - **Discover New Shows**: Explore trending and recommended series.
 
